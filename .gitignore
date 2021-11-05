@@ -13,3 +13,10 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+
+#vim
+*.swp
+
+# auth
+.secret
+tweet_automated_bot
