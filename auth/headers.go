@@ -88,7 +88,7 @@ func (oauth *OauthParams) getTwitterSignature(httpsMethod, url, paramstring stri
 	signingKey := oauth.generateSigningKey()
 	mac := hmac.New(sha1.New, []byte(signingKey))
 	mac.Write([]byte(signatureBase))
-	signature := base64.StdEncoding.EncodeToString(mac.Sum(nil))
+	signature := base64.RawStdEncoding.EncodeToString(mac.Sum(nil))
 	return signature
 }
 
