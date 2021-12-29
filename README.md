@@ -19,3 +19,5 @@ to get the consumer key and consumer secret. store them locally and run
 ```bash
 source .secret
 ```
+## dependencies
+- [go-twitter](https://github.com/dghubble/go-twitter)
