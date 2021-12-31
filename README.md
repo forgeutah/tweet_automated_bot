@@ -19,5 +19,9 @@ to get the consumer key and consumer secret. store them locally and run
 ```bash
 source .secret
 ```
+
+## db
+![db-relation-diagram.drawio]
+
 ## dependencies
 - [go-twitter](https://github.com/dghubble/go-twitter)
