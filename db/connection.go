@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq"
 )
 
 type Connection struct {
@@ -15,7 +16,7 @@ type Connection struct {
 
 func Connect(ctx context.Context) (*Connection, error) {
 	log.Println("Connecting to database...")
-	db, err := sqlx.ConnectContext(ctx, "postgres", os.Getenv("COCKROACH_DB_URL"))
+	db, err := sqlx.Open("postgres", os.Getenv("COCKROACH_DB_URL"))
 	if err != nil {
 
 		return nil, fmt.Errorf("error connecting to database: %w", err)
