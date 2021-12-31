@@ -1,30 +1,18 @@
 package main
 
 import (
-	"fmt"
-	"os"
+	"context"
+	"log"
 
-	"github.com/dghubble/go-twitter/twitter"
-	"github.com/dghubble/oauth1"
+	"github.com/SoyPete/tweet_automated_bot/client"
+	database "github.com/SoyPete/tweet_automated_bot/db"
 )
 
 func main() {
-	oauthConsumerKey := os.Getenv("OAUTH_CONSUMER_KEY")
-	oauthConsumerSecret := os.Getenv("OAUTH_CONSUMER_SECRET")
-	oauthAccessToken := os.Getenv("OAUTH_ACCESS_TOKEN")
-	oauthAccessSecret := os.Getenv("OAUTH_ACCESS_SECRET")
-	config := oauth1.NewConfig(oauthConsumerKey, oauthConsumerSecret)
-	token := oauth1.NewToken(oauthAccessToken, oauthAccessSecret)
-	httpClient := config.Client(oauth1.NoContext, token)
-
-	// Twitter client
-	client := twitter.NewClient(httpClient)
-
-	// Send a Tweet
-	tweet, resp, err := client.Statuses.Update("this is a robot tweet", nil)
+	client := client.NewClient()
+	database.Connect(context.Background())
+	err := client.SendTweet("like if #golang is the best language")
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
-	fmt.Println(tweet, resp)
-
 }
