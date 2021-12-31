@@ -29,8 +29,9 @@ func Connect(ctx context.Context) (*Connection, error) {
 	return connection, nil
 }
 
-func (c *Connection) Close() error {
+func (c *Connection) Close(ctx context.Context) error {
 	log.Println("Closing database connection...")
+	c.DB.MustExecContext(ctx, `DROP TABLE IF EXISTS yt_videos CASCADE`)
 	return c.DB.Close()
 }
 
@@ -42,17 +43,5 @@ func (c *Connection) Ping() error {
 func (c *Connection) Migrate(ctx context.Context) {
 	log.Println("Migrating database...")
 
-	c.DB.MustExecContext(ctx, `
-	CREATE TYPE valid_status AS ENUM ('queued', 'sent', 'failed');
-
-		CREATE TABLE IF NOT EXISTS tweets (
-			id serial,
-			twitter_username text,
-			tweet_text text,
-			links text,
-			send_time timestamp,
-			status valid_status,
-			created_at TIMESTAMP DEFAULT now()
-		);`)
-
+	c.DB.MustExecContext(ctx, create_query)
 }

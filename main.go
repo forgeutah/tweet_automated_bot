@@ -9,9 +9,17 @@ import (
 )
 
 func main() {
+	ctx := context.Background()
 	client := client.NewClient()
-	database.Connect(context.Background())
-	err := client.SendTweet("like if #golang is the best language")
+	db, err := database.Connect(ctx)
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = client.SendTweet("are you excited for #gowest2022? more information coming soon!")
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = db.Close(ctx)
 	if err != nil {
 		log.Fatal(err)
 	}
