@@ -21,10 +21,10 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	// err = client.SendTweet("are you excited for #gowest2022? more information coming soon!")
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
+	err = client.SendTweet("are you excited for #gowest2022? more information coming soon!")
+	if err != nil {
+		log.Fatal(err)
+	}
 	err = db.Close(ctx)
 	if err != nil {
 		log.Fatal(err)
