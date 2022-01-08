@@ -36,7 +36,15 @@ func TestClient_SendTweet(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		{
+			name: "Send tweet",
+			fields: fields{
+				TweetBot: &twitter.Client{},
+			},
+			args: args{
+				message: "Test tweet",
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

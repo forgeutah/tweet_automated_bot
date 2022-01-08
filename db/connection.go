@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net/url"
 	"os"
 
 	"github.com/jmoiron/sqlx"
@@ -16,7 +17,17 @@ type Connection struct {
 
 func Connect(ctx context.Context) (*Connection, error) {
 	log.Println("Connecting to database...")
-	db, err := sqlx.Open("postgres", os.Getenv("COCKROACH_DB_URL"))
+
+	// TODO: remove hardcoded values
+	urlParams := "sslmode=verify-full&options=--cluster%3Dlanky-bird-5343"
+	connectionString := url.URL{
+		Scheme:   "postgres",
+		User:     url.UserPassword(os.Getenv("DB_USERNAME"), os.Getenv("DB_PASSWORD")),
+		Host:     os.Getenv("DB_HOST"),
+		Path:     os.Getenv("DB_NAME"),
+		RawQuery: urlParams,
+	}
+	db, err := sqlx.Connect("postgres", connectionString.String())
 	if err != nil {
 
 		return nil, fmt.Errorf("error connecting to database: %w", err)
