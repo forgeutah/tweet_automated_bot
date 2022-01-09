@@ -19,3 +19,10 @@ to get the consumer key and consumer secret. store them locally and run
 ```bash
 source .secret
 ```
+
+## db
+![db-relation-diagram.drawio]
+[edit here](https://app.diagrams.net/#HSoypete%2Ftweet_automated_bot%2Fsoypete-new-bot%2Fdb-relation-diagram.drawio)
+
+## dependencies
+- [go-twitter](https://github.com/dghubble/go-twitter)
