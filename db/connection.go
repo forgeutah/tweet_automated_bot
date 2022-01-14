@@ -18,7 +18,6 @@ type Connection struct {
 func Connect(ctx context.Context) (*Connection, error) {
 	log.Println("Connecting to database...")
 
-	// TODO: remove hardcoded values
 	urlParams := "sslmode=verify-full&options=--cluster%3Dlanky-bird-5343"
 	connectionString := url.URL{
 		Scheme:   "postgres",
@@ -56,4 +55,23 @@ func (c *Connection) Migrate(ctx context.Context) {
 	log.Println("Migrating database...")
 
 	c.DB.MustExecContext(ctx, create_query)
+	// check if table exists
+	var count int
+	row := c.DB.QueryRowx("SELECT count(*) FROM yt_videos LIMIT 1")
+	if row == nil {
+		log.Println("Table does not exist")
+		// insert data
+		result := c.DB.MustExecContext(ctx, videoInsert)
+		fmt.Println(result)
+	} else {
+		row.Scan(&count)
+		if count == 0 {
+			log.Println("Table is empty")
+			// insert data
+			result := c.DB.MustExecContext(ctx, videoInsert)
+			fmt.Println(result)
+		} else {
+			log.Println("Table is not empty")
+		}
+	}
 }
