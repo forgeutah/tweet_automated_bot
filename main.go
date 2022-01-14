@@ -7,6 +7,7 @@ import (
 	"github.com/SoyPete/tweet_automated_bot/client"
 	database "github.com/SoyPete/tweet_automated_bot/db"
 	"github.com/SoyPete/tweet_automated_bot/internal/botguts"
+	"github.com/SoyPete/tweet_automated_bot/server"
 )
 
 func main() {
@@ -15,6 +16,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+<<<<<<< HEAD
 	db, err := database.Connect(ctx)
 	if err != nil {
 		log.Fatal(err)
@@ -30,4 +32,9 @@ func main() {
 	}
 
 	client.RunDiscordBot()
+=======
+	bot := botguts.NewAutoBot(db, client)
+	s := server.NewTweeterServer(bot)
+	s.ServeHTTP()
+>>>>>>> e8cfe33 (ad server for gcp cloud run)
 }
