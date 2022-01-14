@@ -7,6 +7,7 @@ import (
 	"github.com/SoyPete/tweet_automated_bot/client"
 	database "github.com/SoyPete/tweet_automated_bot/db"
 	"github.com/SoyPete/tweet_automated_bot/internal/botguts"
+	"github.com/SoyPete/tweet_automated_bot/server"
 )
 
 func main() {
@@ -17,12 +18,6 @@ func main() {
 		log.Fatal(err)
 	}
 	bot := botguts.NewAutoBot(db, client)
-	err = bot.TweetYoutubeVideo(ctx)
-	if err != nil {
-		log.Fatal(err)
-	}
-	err = db.Close(ctx)
-	if err != nil {
-		log.Fatal(err)
-	}
+	s := server.NewTweeterServer(bot)
+	s.ServeHTTP()
 }

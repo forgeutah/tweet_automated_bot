@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/SoyPete/tweet_automated_bot/client"
 	database "github.com/SoyPete/tweet_automated_bot/db"
@@ -12,6 +13,7 @@ import (
 type AutoBot struct {
 	dbclient      *database.Connection
 	twitterClient *client.Client
+	timer         *time.Ticker
 }
 
 // NewAutoBot is a function that will create a new AutoBot. This auto bot is responsible for tweeting
