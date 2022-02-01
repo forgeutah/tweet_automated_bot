@@ -17,25 +17,24 @@ func main() {
 		fmt.Println("error creating Discord session,", err)
 		return
 	}
-
-	tweetBotCommand := discordgo.ApplicationCommand{
-		Name:        "tweet",
-		Description: "tweet test to the forge foundation twiiter account.",
-		Type:        discordgo.ChatApplicationCommand,
-	}
-	err = dg.ApplicationCommandCreate(dg.State.User.ID, "", tweetBotCommand)
-	if err != nil {
-		fmt.Println("error opening connection,", err)
-		return
-	}
-	dg.AddHandler(handleTweets)
-
 	// Open a websocket connection to Discord and begin listening.
 	err = dg.Open()
 	if err != nil {
 		fmt.Println("error opening connection,", err)
 		return
 	}
+
+	tweetBotCommand := &discordgo.ApplicationCommand{
+		Name:        "tweet",
+		Description: "tweet test to the forge foundation twiiter account.",
+		Type:        discordgo.ChatApplicationCommand,
+	}
+	_, err = dg.ApplicationCommandCreate(dg.State.User.ID, "", tweetBotCommand)
+	if err != nil {
+		fmt.Println("error opening connection,", err)
+		return
+	}
+	dg.AddHandler(handleTweets)
 
 	// Wait here until CTRL-C or other term signal is received.
 	fmt.Println("Bot is now running.  Press CTRL-C to exit.")
