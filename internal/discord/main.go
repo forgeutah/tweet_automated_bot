@@ -9,7 +9,10 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
+const guildID = "922613112119631913"
+
 func main() {
+
 	token := os.Getenv("DISCORD_TOKEN")
 	// Create a new Discord session using the provided bot token.
 	dg, err := discordgo.New("Bot " + token)
@@ -17,24 +20,33 @@ func main() {
 		fmt.Println("error creating Discord session,", err)
 		return
 	}
+
+	dg.AddHandler(messageCreate)
+
+	dg.AddHandler(sendTweet)
+
 	// Open a websocket connection to Discord and begin listening.
 	err = dg.Open()
 	if err != nil {
 		fmt.Println("error opening connection,", err)
 		return
 	}
+	// Cleanly close down the Discord session.
+	defer dg.Close()
 
-	tweetBotCommand := &discordgo.ApplicationCommand{
-		Name:        "tweet",
-		Description: "tweet test to the forge foundation twiiter account.",
-		Type:        discordgo.ChatApplicationCommand,
+	//make command
+	cmd := discordgo.ApplicationCommand{
+		Name:        "tweet_gw",
+		Description: "Send a tweet in the gowest channel",
 	}
-	_, err = dg.ApplicationCommandCreate(dg.State.User.ID, "", tweetBotCommand)
+
+	// message we are online
+	(dg.ChannelMessageSend("922613112585207833", "the Forge has it's eyes on you!"))
+	_, err = dg.ApplicationCommandCreate(dg.State.User.ID, guildID, &cmd)
 	if err != nil {
-		fmt.Println("error opening connection,", err)
-		return
+		fmt.Print(fmt.Errorf("cannot create '%v' command: %w", cmd.Name, err))
+		panic(err)
 	}
-	dg.AddHandler(handleTweets)
 
 	// Wait here until CTRL-C or other term signal is received.
 	fmt.Println("Bot is now running.  Press CTRL-C to exit.")
@@ -42,13 +54,32 @@ func main() {
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM)
 	<-sc
 
-	// Cleanly close down the Discord session.
-	dg.Close()
 }
 
-// this function will handle tweets sent via discord slash commands.
-func handleTweets(s *discordgo.Session, i *discordgo.InteractionCreate) {
-	if i.ApplicationCommandData().Name == "tweet" {
-		fmt.Println("tweet command received")
+// This function will be called (due to AddHandler above) every time a new
+// message is created on any channel that the authenticated bot has access to.
+func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
+
+	// Ignore all messages created by the bot itself
+	// This isn't required in this specific example but it's a good practice.
+	if m.Author.ID == s.State.User.ID {
+		return
+	}
+	// If the message is "ping" reply with "Pong!"
+	if m.Content == "ping" {
+		s.ChannelMessageSend(m.ChannelID, "Pong!")
+	}
+
+	// If the message is "pong" reply with "Ping!"
+	if m.Content == "pong" {
+		s.ChannelMessageSend(m.ChannelID, "Ping!")
+	}
+}
+
+func sendTweet(s *discordgo.Session, it *discordgo.InteractionCreate) {
+	if it.Type == discordgo.InteractionApplicationCommand {
+		if it.Message.Content == "!tweet_gw" {
+			s.ChannelMessageSend(it.ChannelID, "Tweet sent!")
+		}
 	}
 }
