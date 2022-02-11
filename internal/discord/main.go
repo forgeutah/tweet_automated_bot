@@ -9,6 +9,15 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
+/*
+Todo:
+* add command to single gowest channel
+* limit who can call the command using discord roles
+* add a command to forge utah twiter
+* add roles to discord for gowest organizer and meetup organizer
+* connect to twitter client
+*/
+
 const guildID = "922613112119631913"
 
 func main() {
@@ -34,10 +43,33 @@ func main() {
 	// Cleanly close down the Discord session.
 	defer dg.Close()
 
+	// channelOption := discordgo.ApplicationCommandOption{
+	// 	Type:        discordgo.ApplicationCommandOptionChannel,
+	// 	Name:        "channel-option",
+	// 	Description: "limit channel?",
+	// 	// Channel type mask
+	// 	ChannelTypes: []discordgo.ChannelType{
+	// 		discordgo.ChannelTypeGuildText,
+	// 		discordgo.ChannelTypeGuildVoice,
+	// 	},
+	// 	Required: true,
+	// }
+
+	// roleOption := discordgo.ApplicationCommandOption{
+	// 	Type:        discordgo.ApplicationCommandOptionRole,
+	// 	Name:        "role-option",
+	// 	Description: "Role option",
+	// 	Required:    true,
+	// }
+
+	// var cmdMap []*discordgo.ApplicationCommandOption
+	// cmdMap = append(cmdMap, &channelOption)
+	// cmdMap = append(cmdMap, &roleOption)
 	//make command
 	cmd := discordgo.ApplicationCommand{
 		Name:        "tweet_gw",
 		Description: "Send a tweet in the gowest channel",
+		// Options:     cmdMap,
 	}
 
 	// message we are online
@@ -77,9 +109,30 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 }
 
 func sendTweet(s *discordgo.Session, it *discordgo.InteractionCreate) {
-	if it.Type == discordgo.InteractionApplicationCommand {
-		if it.Message.Content == "!tweet_gw" {
-			s.ChannelMessageSend(it.ChannelID, "Tweet sent!")
+	// check user role
+
+	// role id 939282540991225897
+	fmt.Println(it.Member.Roles, it.Member.User.Username)
+
+	if haveValidRoles(it.Member.Roles) {
+		// send tweet
+		s.ChannelMessageSend("939270685468008520", "tweet sent")
+	} else {
+		s.ChannelMessageSend("939270685468008520", "you are not authorized to use this command")
+	}
+	s.InteractionRespond(it.Interaction, &discordgo.InteractionResponse{
+		Type: discordgo.InteractionResponseChannelMessageWithSource,
+		Data: &discordgo.InteractionResponseData{
+			Content: "tweet send to twitter client",
+		},
+	})
+}
+
+func haveValidRoles(roles []string) bool {
+	for _, role := range roles {
+		if role == "939282540991225897" {
+			return true
 		}
 	}
+	return false
 }
