@@ -11,7 +11,10 @@ import (
 
 func main() {
 	ctx := context.Background()
-	client := client.NewClient()
+	client, err := client.NewClient()
+	if err != nil {
+		log.Fatal(err)
+	}
 	db, err := database.Connect(ctx)
 	if err != nil {
 		log.Fatal(err)
@@ -25,7 +28,5 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	client.RunDiscordBot()
 
 }

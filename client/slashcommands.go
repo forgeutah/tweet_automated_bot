@@ -6,6 +6,40 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
+func configureSlashCommands(dg *discordgo.Session) error {
+
+	dg.AddHandler(messageCreate)
+
+	dg.AddHandler(sendTweet)
+
+	dg.AddHandler(sendNewman)
+	//make command
+	cmd := discordgo.ApplicationCommand{
+		Name:        "tweet_gw",
+		Description: "Send a tweet in the gowest channel",
+		// Options:     cmdMap,
+	}
+	// cmdNewman := discordgo.ApplicationCommand{
+	// 	Name:        "newman",
+	// 	Description: "nyan cat gif share",
+	// 	// Options:     cmdMap,
+	// }
+	fmt.Println(dg.State.User.ID)
+
+	// message we are online
+	_, err := dg.ApplicationCommandCreate(dg.State.User.ID, guildID, &cmd)
+	if err != nil {
+		return fmt.Errorf("cannot create '%v' command: %w", cmd.Name, err)
+
+	}
+
+	// _, err = c.DiscordBot.ApplicationCommandCreate(c.DiscordBot.State.User.ID, guildID, &cmdNewman)
+	// if err != nil {
+	// 	return fmt.Errorf("cannot create '%v' command: %w", cmd.Name, err)
+	// }
+	return nil
+}
+
 // This function will be called (due to AddHandler above) every time a new
 // message is created on any channel that the authenticated bot has access to.
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {

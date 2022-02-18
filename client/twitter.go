@@ -14,7 +14,7 @@ type Client struct {
 	DiscordBot *discordgo.Session
 }
 
-func NewClient() *Client {
+func NewClient() (*Client, error) {
 	oauthConsumerKey := os.Getenv("OAUTH_CONSUMER_KEY")
 	oauthConsumerSecret := os.Getenv("OAUTH_CONSUMER_SECRET")
 	oauthAccessToken := os.Getenv("OAUTH_ACCESS_TOKEN")
@@ -28,16 +28,17 @@ func NewClient() *Client {
 	client := twitter.NewClient(httpClient)
 
 	//Discord client
-	dgclient := setupDiscord(discordToken)
+	dgclient, err := setupDiscord(discordToken)
+	if err != nil {
+		return nil, fmt.Errorf("failed to setup discord: %w", err)
+	}
 
 	c := &Client{
 		TweetBot:   client,
 		DiscordBot: dgclient,
 	}
 
-	c.configureSlashCommands()
-
-	return c
+	return c, nil
 
 }
 
