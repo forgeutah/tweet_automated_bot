@@ -20,9 +20,6 @@ func setupDiscord(token string) (*discordgo.Session, error) {
 		return nil, err
 	}
 
-	RunDiscordBot(dg)
-
-	err = configureSlashCommands(dg)
 	if err != nil {
 		err = fmt.Errorf("error configuring slash commands: %w", err)
 		return nil, err
@@ -30,18 +27,23 @@ func setupDiscord(token string) (*discordgo.Session, error) {
 	return dg, nil
 }
 
-func RunDiscordBot(dg *discordgo.Session) {
+func (c *Client) RunDiscordBot() {
 	// Open a websocket connection to Discord and begin listening.
-	err := dg.Open()
+	err := c.DiscordBot.Open()
 	if err != nil {
 		fmt.Println("error opening connection,", err)
 		return
 	}
 
-	dg.ChannelMessageSend("922613112585207833", "the Forge has it's eyes on you!")
+	c.DiscordBot.ChannelMessageSend("922613112585207833", "the Forge has it's eyes on you!")
+	err = configureSlashCommands(c.DiscordBot)
+	if err != nil {
+		fmt.Println("error configuring slash commands,", err)
+		return
+	}
 
 	// Cleanly close down the Discord session.
-	defer dg.Close()
+	defer c.DiscordBot.Close()
 
 	// TODO: this needs to link to twittttterss?
 	// Wait here until CTRL-C or other term signal is received.

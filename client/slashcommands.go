@@ -10,21 +10,17 @@ func configureSlashCommands(dg *discordgo.Session) error {
 
 	dg.AddHandler(messageCreate)
 
-	dg.AddHandler(sendTweet)
-
-	dg.AddHandler(sendNewman)
 	//make command
 	cmd := discordgo.ApplicationCommand{
 		Name:        "tweet_gw",
 		Description: "Send a tweet in the gowest channel",
 		// Options:     cmdMap,
 	}
-	// cmdNewman := discordgo.ApplicationCommand{
-	// 	Name:        "newman",
-	// 	Description: "nyan cat gif share",
-	// 	// Options:     cmdMap,
-	// }
-	fmt.Println(dg.State.User.ID)
+	cmdNewman := discordgo.ApplicationCommand{
+		Name:        "newman",
+		Description: "nyan cat gif share",
+		// Options:     cmdMap,
+	}
 
 	// message we are online
 	_, err := dg.ApplicationCommandCreate(dg.State.User.ID, guildID, &cmd)
@@ -33,31 +29,22 @@ func configureSlashCommands(dg *discordgo.Session) error {
 
 	}
 
-	// _, err = c.DiscordBot.ApplicationCommandCreate(c.DiscordBot.State.User.ID, guildID, &cmdNewman)
-	// if err != nil {
-	// 	return fmt.Errorf("cannot create '%v' command: %w", cmd.Name, err)
-	// }
+	_, err = dg.ApplicationCommandCreate(dg.State.User.ID, guildID, &cmdNewman)
+	if err != nil {
+		return fmt.Errorf("cannot create '%v' command: %w", cmd.Name, err)
+	}
 	return nil
 }
 
-// This function will be called (due to AddHandler above) every time a new
-// message is created on any channel that the authenticated bot has access to.
-func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
-
-	// Ignore all messages created by the bot itself
-	// This isn't required in this specific example but it's a good practice.
-	if m.Author.ID == s.State.User.ID {
-		return
-	}
-	// If the message is "ping" reply with "Pong!"
-	if m.Content == "ping" {
-		s.ChannelMessageSend(m.ChannelID, "Pong!")
+func messageCreate(s *discordgo.Session, it *discordgo.InteractionCreate) {
+	switch it.ApplicationCommandData().Name {
+	case "tweet_gw":
+		sendTweet(s, it)
+	case "newman":
+		sendNewman(s, it)
+	default:
 	}
 
-	// If the message is "pong" reply with "Ping!"
-	if m.Content == "pong" {
-		s.ChannelMessageSend(m.ChannelID, "Ping!")
-	}
 }
 
 func sendTweet(s *discordgo.Session, it *discordgo.InteractionCreate) {

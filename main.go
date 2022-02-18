@@ -29,4 +29,5 @@ func main() {
 		log.Fatal(err)
 	}
 
+	client.RunDiscordBot()
 }
