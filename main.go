@@ -16,13 +16,16 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	// TODO: remove and setup permanent datastore
+	defer db.Close(ctx)
+
+	// TODO: ここでbotを作成する
 	bot := botguts.NewAutoBot(db, client)
 	err = bot.TweetYoutubeVideo(ctx)
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = db.Close(ctx)
-	if err != nil {
-		log.Fatal(err)
-	}
+
+	client.RunDiscordBot()
+
 }
