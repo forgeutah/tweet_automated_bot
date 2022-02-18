@@ -6,9 +6,9 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func configureSlashCommands(dg *discordgo.Session) error {
+func (c *Client) configureSlashCommands() error {
 
-	dg.AddHandler(messageCreate)
+	c.DiscordBot.AddHandler(c.messageCreate)
 
 	//make command
 	cmd := discordgo.ApplicationCommand{
@@ -23,23 +23,23 @@ func configureSlashCommands(dg *discordgo.Session) error {
 	}
 
 	// message we are online
-	_, err := dg.ApplicationCommandCreate(dg.State.User.ID, guildID, &cmd)
+	_, err := c.DiscordBot.ApplicationCommandCreate(c.DiscordBot.State.User.ID, guildID, &cmd)
 	if err != nil {
 		return fmt.Errorf("cannot create '%v' command: %w", cmd.Name, err)
 
 	}
 
-	_, err = dg.ApplicationCommandCreate(dg.State.User.ID, guildID, &cmdNewman)
+	_, err = c.DiscordBot.ApplicationCommandCreate(c.DiscordBot.State.User.ID, guildID, &cmdNewman)
 	if err != nil {
 		return fmt.Errorf("cannot create '%v' command: %w", cmd.Name, err)
 	}
 	return nil
 }
 
-func messageCreate(s *discordgo.Session, it *discordgo.InteractionCreate) {
+func (c *Client) messageCreate(s *discordgo.Session, it *discordgo.InteractionCreate) {
 	switch it.ApplicationCommandData().Name {
 	case "tweet_gw":
-		sendTweet(s, it)
+		c.sendTweet(s, it)
 	case "newman":
 		sendNewman(s, it)
 	default:
@@ -47,9 +47,22 @@ func messageCreate(s *discordgo.Session, it *discordgo.InteractionCreate) {
 
 }
 
-func sendTweet(s *discordgo.Session, it *discordgo.InteractionCreate) {
-	// check user role
+func (c *Client) sendTweet(s *discordgo.Session, it *discordgo.InteractionCreate) {
+	embedImage := &discordgo.MessageEmbed{
+		Title: "Sent",
+		Image: &discordgo.MessageEmbedImage{
+			URL: "https://media.giphy.com/media/Qs79cNS60bhY9UC1dP/giphy.gif",
+		},
+	}
+	defer s.InteractionRespond(it.Interaction, &discordgo.InteractionResponse{
+		Type: discordgo.InteractionResponseChannelMessageWithSource,
+		Data: &discordgo.InteractionResponseData{
+			Content: "twitter sent",
+			Embeds:  []*discordgo.MessageEmbed{embedImage},
+		},
+	})
 
+	// check user role
 	// role id 939282540991225897
 	fmt.Println(it.Member.Roles, it.Member.User.Username)
 
@@ -59,9 +72,11 @@ func sendTweet(s *discordgo.Session, it *discordgo.InteractionCreate) {
 	} else {
 		s.ChannelMessageSend("939270685468008520", "you are not authorized to use this command")
 	}
-	s.InteractionRespond(it.Interaction, &discordgo.InteractionResponse{
-		Type: discordgo.InteractionResponseChannelMessageWithSource,
-	})
+	//get tweet message
+	fmt.Println(it.Interaction.Message)
+
+	// make response
+
 }
 
 // lock out jacoboco

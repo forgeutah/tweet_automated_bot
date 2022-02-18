@@ -36,7 +36,7 @@ func (c *Client) RunDiscordBot() {
 	}
 
 	c.DiscordBot.ChannelMessageSend("922613112585207833", "the Forge has it's eyes on you!")
-	err = configureSlashCommands(c.DiscordBot)
+	err = c.configureSlashCommands()
 	if err != nil {
 		fmt.Println("error configuring slash commands,", err)
 		return
