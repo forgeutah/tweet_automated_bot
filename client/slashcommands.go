@@ -14,12 +14,18 @@ func (c *Client) configureSlashCommands() error {
 	cmd := discordgo.ApplicationCommand{
 		Name:        "tweet_gw",
 		Description: "Send a tweet in the gowest channel",
-		// Options:     cmdMap,
+		Options: []*discordgo.ApplicationCommandOption{
+			{
+				Type:        discordgo.ApplicationCommandOptionString,
+				Name:        "tweet-body", // all names is discord api must be lowercase and without space.
+				Description: "content of the tweet",
+				Required:    true,
+			},
+		},
 	}
 	cmdNewman := discordgo.ApplicationCommand{
 		Name:        "newman",
 		Description: "nyan cat gif share",
-		// Options:     cmdMap,
 	}
 
 	// message we are online
@@ -48,34 +54,39 @@ func (c *Client) messageCreate(s *discordgo.Session, it *discordgo.InteractionCr
 }
 
 func (c *Client) sendTweet(s *discordgo.Session, it *discordgo.InteractionCreate) {
+	discordResponse := "tweet Sent"
 	embedImage := &discordgo.MessageEmbed{
 		Title: "Sent",
 		Image: &discordgo.MessageEmbedImage{
 			URL: "https://media.giphy.com/media/Qs79cNS60bhY9UC1dP/giphy.gif",
 		},
 	}
-	defer s.InteractionRespond(it.Interaction, &discordgo.InteractionResponse{
+
+	if !haveValidRoles(it.Member.Roles) {
+		discordResponse = "you are not authorized to use this command"
+		embedImage.Title = "Not Authorized"
+		embedImage.Image.URL = "https://media.giphy.com/media/aU8vURhmTjX4He06SF/giphy.gif"
+	} else {
+
+		//get tweet message
+		tweetBody := it.ApplicationCommandData().Options[0].StringValue()
+
+		err := c.SendTweet(tweetBody)
+		if err != nil {
+			discordResponse = "error sending tweet"
+			embedImage.Title = "Error"
+			embedImage.Image.URL = "https://media.giphy.com/media/3oxHQn7gZW2wBGafxm/giphy.gif"
+		}
+	}
+
+	// make response
+	s.InteractionRespond(it.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
 		Data: &discordgo.InteractionResponseData{
-			Content: "twitter sent",
+			Content: discordResponse,
 			Embeds:  []*discordgo.MessageEmbed{embedImage},
 		},
 	})
-
-	// check user role
-	// role id 939282540991225897
-	fmt.Println(it.Member.Roles, it.Member.User.Username)
-
-	if haveValidRoles(it.Member.Roles) {
-		// send tweet
-		s.ChannelMessageSend("939270685468008520", "tweet sent")
-	} else {
-		s.ChannelMessageSend("939270685468008520", "you are not authorized to use this command")
-	}
-	//get tweet message
-	fmt.Println(it.Interaction.Message)
-
-	// make response
 
 }
 

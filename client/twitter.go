@@ -1,3 +1,6 @@
+/*
+Package client is a used to wrapper the twitter client and discord client.
+*/
 package client
 
 import (
