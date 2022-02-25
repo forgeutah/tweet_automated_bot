@@ -5,6 +5,7 @@ import (
 )
 
 func TestClient_SendTweet(t *testing.T) {
+	c, _ := NewClient()
 	type args struct {
 		message string
 	}
@@ -16,7 +17,7 @@ func TestClient_SendTweet(t *testing.T) {
 	}{
 		{
 			name: "Send tweet but no credentials",
-			bot:  NewClient(),
+			bot:  c,
 			args: args{
 				message: "Test tweet",
 			},
