@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/dghubble/go-twitter/twitter"
 )
 
 func TestClient_configureSlashCommands(t *testing.T) {
