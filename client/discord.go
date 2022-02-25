@@ -35,7 +35,8 @@ func (c *Client) RunDiscordBot() {
 		return
 	}
 
-	c.DiscordBot.ChannelMessageSend("922613112585207833", "the Forge has it's eyes on you!")
+	// sent to general channel
+	c.DiscordBot.ChannelMessageSend("922613112585207833", "ForgeFoundation Twitter Bot is now online!")
 	err = c.configureSlashCommands()
 	if err != nil {
 		fmt.Println("error configuring slash commands,", err)
@@ -45,7 +46,6 @@ func (c *Client) RunDiscordBot() {
 	// Cleanly close down the Discord session.
 	defer c.DiscordBot.Close()
 
-	// TODO: this needs to link to twittttterss?
 	// Wait here until CTRL-C or other term signal is received.
 	fmt.Println("Bot is now running.  Press CTRL-C to exit.")
 	sc := make(chan os.Signal, 1)

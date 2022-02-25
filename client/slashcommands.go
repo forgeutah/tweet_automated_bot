@@ -28,13 +28,12 @@ func (c *Client) configureSlashCommands() error {
 		Description: "nyan cat gif share",
 	}
 
-	// message we are online
+	// add commands to bot
 	_, err := c.DiscordBot.ApplicationCommandCreate(c.DiscordBot.State.User.ID, guildID, &cmd)
 	if err != nil {
 		return fmt.Errorf("cannot create '%v' command: %w", cmd.Name, err)
 
 	}
-
 	_, err = c.DiscordBot.ApplicationCommandCreate(c.DiscordBot.State.User.ID, guildID, &cmdNewman)
 	if err != nil {
 		return fmt.Errorf("cannot create '%v' command: %w", cmd.Name, err)
@@ -90,7 +89,7 @@ func (c *Client) sendTweet(s *discordgo.Session, it *discordgo.InteractionCreate
 
 }
 
-// lock out jacoboco
+// check if user have valid roles
 func haveValidRoles(roles []string) bool {
 	for _, role := range roles {
 		// tweet_bot role
