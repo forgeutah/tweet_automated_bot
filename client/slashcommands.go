@@ -93,7 +93,7 @@ func (c *Client) sendTweet(s *discordgo.Session, it *discordgo.InteractionCreate
 func haveValidRoles(roles []string) bool {
 	for _, role := range roles {
 		// tweet_bot role
-		if role == "939282540991225897" {
+		if role == tweetBotRole {
 			return true
 		}
 	}

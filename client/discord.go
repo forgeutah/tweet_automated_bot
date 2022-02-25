@@ -11,6 +11,7 @@ import (
 
 // TODO: where should this go?
 const guildID = "922613112119631913"
+const tweetBotRole = "939282540991225897"
 
 func setupDiscord(token string) (*discordgo.Session, error) {
 	// Create a new Discord session using the provided bot token.
@@ -20,10 +21,6 @@ func setupDiscord(token string) (*discordgo.Session, error) {
 		return nil, err
 	}
 
-	if err != nil {
-		err = fmt.Errorf("error configuring slash commands: %w", err)
-		return nil, err
-	}
 	return dg, nil
 }
 
