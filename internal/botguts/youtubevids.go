@@ -32,7 +32,7 @@ func makeVideoTweet(video *database.YoutubeVideo) string {
 	if video.ConferenceYear == "2020" {
 		hashtagYear = "#gowest2020"
 	}
-	return fmt.Sprintf("Video Drop from %s\n\n%s\nby @%s\n\n%s\n\n#golang #gowestconf", hashtagYear, video.Title, video.PresenterTwitter, video.URL)
+	return fmt.Sprintf("Video Drop from %s\n\n%s\nby %s\n\n%s\n\n#golang #gowestconf", hashtagYear, video.Title, video.PresenterTwitter, video.URL)
 }
 
 // TweetYoutubeVideo is a function that will tweet a random youtube video
