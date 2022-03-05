@@ -1,0 +1,16 @@
+#!/bin/bash
+set -eux
+
+go build -v -o tweet_automated_bot
+
+# cluster ID for cockroach serverless instance
+export DB_CLUSTER_ID="e069a92e-fb33-4e74-ad3c-1a73a1f1a848"
+
+export DB_NAME=defaultdb
+export DB_HOST=free-tier9.gcp-us-west2.cockroachlabs.cloud:26257
+export DB_USERNAME=cloudrun
+export DB_OPTIONS="--cluster=aero-walker-176"
+
+source .secret
+
+./tweet_automated_bot

@@ -12,11 +12,11 @@ import (
 
 func main() {
 	ctx := context.Background()
+
 	client, err := client.NewClient()
 	if err != nil {
 		log.Fatal(err)
 	}
-<<<<<<< HEAD
 	db, err := database.Connect(ctx)
 	if err != nil {
 		log.Fatal(err)
@@ -24,17 +24,10 @@ func main() {
 	// TODO: remove and setup permanent datastore
 	defer db.Close(ctx)
 
-	// TODO: ここでbotを作成する
-	bot := botguts.NewAutoBot(db, client)
-	err = bot.TweetYoutubeVideo(ctx)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	client.RunDiscordBot()
-=======
 	bot := botguts.NewAutoBot(db, client)
 	s := server.NewTweeterServer(bot)
+
+	// This calls ListenAndServer, which blocks
 	s.ServeHTTP()
->>>>>>> e8cfe33 (ad server for gcp cloud run)
+
 }
