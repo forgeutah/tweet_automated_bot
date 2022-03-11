@@ -20,6 +20,7 @@ func healthCheck(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	ctx := context.Background()
+
 	client, err := client.NewClient()
 	if err != nil {
 		log.Fatal(err)

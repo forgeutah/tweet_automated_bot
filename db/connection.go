@@ -18,25 +18,39 @@ type Connection struct {
 func Connect(ctx context.Context) (*Connection, error) {
 	log.Println("Connecting to database...")
 
-	urlParams := fmt.Sprintf("sslmode=verify-full&sslrootcert=%s&options=--cluster%%3Dlanky-bird-5343", os.Getenv("PGSSLROOTCERT"))
+	rootCertPath, err := loadCockroachRootCert(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	params := url.Values{}
+	params.Set("sslmode", "verify-full")
+	params.Set("sslrootcert", rootCertPath)
+	params.Set("options", os.Getenv("DB_OPTIONS"))
+
 	connectionString := url.URL{
 		Scheme:   "postgres",
 		User:     url.UserPassword(os.Getenv("DB_USERNAME"), os.Getenv("DB_PASSWORD")),
 		Host:     os.Getenv("DB_HOST"),
 		Path:     os.Getenv("DB_NAME"),
-		RawQuery: urlParams,
+		RawQuery: params.Encode(),
 	}
+	log.Println(connectionString.String())
+
 	db, err := sqlx.Connect("postgres", connectionString.String())
 	if err != nil {
 
 		return nil, fmt.Errorf("error connecting to database: %w", err)
 	}
+
 	connection := &Connection{DB: db}
 	connection.Migrate(ctx)
 
 	if err := connection.Ping(); err != nil {
 		return nil, fmt.Errorf("error pinging database: %w", err)
 	}
+	log.Println("Connected to database")
+
 	return connection, nil
 }
 
