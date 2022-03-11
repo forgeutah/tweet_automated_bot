@@ -4,8 +4,10 @@ WORKDIR /app
 COPY go.* ./
 RUN go mod download
 
-COPY . ./
-RUN go build -v -o autobot
+EXPOSE 8080
 
-CMD ["/app/autobot"]
+COPY . ./
+RUN go build -v -o twitter-bot
+
+CMD ["/app/twitter-bot"]
 

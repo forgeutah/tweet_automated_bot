@@ -18,7 +18,7 @@ type Connection struct {
 func Connect(ctx context.Context) (*Connection, error) {
 	log.Println("Connecting to database...")
 
-	urlParams := "sslmode=verify-full&options=--cluster%3Dlanky-bird-5343"
+	urlParams := fmt.Sprintf("sslmode=verify-full&sslrootcert=%s&options=--cluster%%3Dlanky-bird-5343", os.Getenv("PGSSLROOTCERT"))
 	connectionString := url.URL{
 		Scheme:   "postgres",
 		User:     url.UserPassword(os.Getenv("DB_USERNAME"), os.Getenv("DB_PASSWORD")),
