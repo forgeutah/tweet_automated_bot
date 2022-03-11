@@ -21,3 +21,4 @@
 .secret
 tweet_automated_bot
 dev/run_db.sh
+*.crt
