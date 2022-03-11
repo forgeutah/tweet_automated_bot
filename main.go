@@ -2,9 +2,12 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/SoyPete/tweet_automated_bot/client"
 	database "github.com/SoyPete/tweet_automated_bot/db"
@@ -26,8 +29,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	// TODO: remove and setup permanent datastore
-	defer db.Close(ctx)
 
 	// TODO: ここでbotを作成する
 	bot := botguts.NewAutoBot(db, client)
@@ -37,6 +38,15 @@ func main() {
 	}
 
 	client.RunDiscordBot()
+	// Wait here until CTRL-C or other term signal is received.
+	fmt.Println("Bot is now running.  Press CTRL-C to exit.")
+	signal.Notify(client.ShutDown, syscall.SIGINT, syscall.SIGTERM)
+
+	go func() {
+		<-client.ShutDown
+		fmt.Println("Bot is now stopped.")
+		os.Exit(0)
+	}()
 
 	http.HandleFunc("/health", healthCheck)
 
@@ -52,4 +62,5 @@ func main() {
 	if err := http.ListenAndServe(":"+port, nil); err != nil {
 		log.Fatal(err)
 	}
+
 }
