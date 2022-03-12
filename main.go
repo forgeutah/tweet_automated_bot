@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"net/http"
@@ -10,8 +9,6 @@ import (
 	"syscall"
 
 	"github.com/SoyPete/tweet_automated_bot/client"
-	database "github.com/SoyPete/tweet_automated_bot/db"
-	"github.com/SoyPete/tweet_automated_bot/internal/botguts"
 )
 
 func healthCheck(w http.ResponseWriter, r *http.Request) {
@@ -19,20 +16,7 @@ func healthCheck(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	ctx := context.Background()
-
 	client, err := client.NewClient()
-	if err != nil {
-		log.Fatal(err)
-	}
-	db, err := database.Connect(ctx)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// TODO: ここでbotを作成する
-	bot := botguts.NewAutoBot(db, client)
-	err = bot.TweetYoutubeVideo(ctx)
 	if err != nil {
 		log.Fatal(err)
 	}

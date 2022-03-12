@@ -11,7 +11,7 @@ import (
 )
 
 func loadCockroachRootCert(ctx context.Context) (string, error) {
-	fn := "cockroach-public-root.crt"
+	fn := "db/root.crt"
 	_, err := os.Stat(fn)
 	if err == nil {
 		return fn, nil
