@@ -27,7 +27,7 @@ func Connect(ctx context.Context) (*Connection, error) {
 	params.Set("sslmode", "verify-full")
 	params.Set("sslrootcert", rootCertPath)
 	params.Set("options", os.Getenv("DB_OPTIONS"))
-
+  
 	connectionString := url.URL{
 		Scheme:   "postgres",
 		User:     url.UserPassword(os.Getenv("DB_USERNAME"), os.Getenv("DB_PASSWORD")),
