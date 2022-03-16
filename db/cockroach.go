@@ -10,14 +10,15 @@ import (
 	"os"
 )
 
+const fn = "cockroach-public-root.crt"
+
 func loadCockroachRootCert(ctx context.Context) (string, error) {
-	fn := "cockroach-public-root.crt"
 	_, err := os.Stat(fn)
 	if err == nil {
 		return fn, nil
 	}
-	// assume we need to get the file
 
+	// assume we need to get the file
 	log.Println("loading cluster root certificate")
 
 	clusterID := os.Getenv("DB_CLUSTER_ID")
@@ -42,4 +43,14 @@ func loadCockroachRootCert(ctx context.Context) (string, error) {
 	// Write the body to file
 	_, err = io.Copy(out, resp.Body)
 	return fn, err
+}
+
+func removeCert(ctx context.Context) error {
+	_, err := os.Stat(fn)
+	if err != nil {
+		return nil
+	}
+
+	log.Println("removing cluster root certificate")
+	return os.Remove(fn)
 }
