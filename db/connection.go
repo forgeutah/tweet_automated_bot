@@ -25,20 +25,20 @@ func Connect(ctx context.Context) (*Connection, error) {
 	}
 
 	params := url.Values{}
-	params.Set("sslmode", "verify-full")
 	params.Set("sslrootcert", fn)
-	params.Set("options", "--cluster%3Dlanky-bird-5343")
+	params.Set("sslmode", "verify-full")
 
 	connectionString := url.URL{
-		Scheme:   "postgres",
+		Scheme:   "postgresql",
 		User:     url.UserPassword(os.Getenv("DB_USERNAME"), os.Getenv("DB_PASSWORD")),
 		Host:     os.Getenv("DB_HOST"),
 		Path:     os.Getenv("DB_NAME"),
-		RawQuery: params.Encode(),
+		RawQuery: params.Encode() + "&options=--cluster%3Dlanky-bird-5343", // options and clusert values need to remain un-encoded to connect:
 	}
 
 	//TODO: remove lines 40-46
 	log.Println(connectionString.String())
+	log.Println("postgresql://miriah:4Xgps-QJ9CkReiZU@free-tier.gcp-us-central1.cockroachlabs.cloud:26257/defaultdb?sslmode=verify-full&sslrootcert=db/cockroach-cert.crt&options=--cluster%3Dlanky-bird-5343")
 	files, _ := ioutil.ReadDir("./")
 
 	for _, f := range files {

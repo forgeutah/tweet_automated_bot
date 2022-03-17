@@ -10,7 +10,7 @@ import (
 	"os"
 )
 
-const fn = "db/cockroach-public-root.crt"
+const fn = "db/cockroach-root.crt"
 
 func loadCockroachRootCert(ctx context.Context) error {
 	_, err := os.Stat(fn)
@@ -27,6 +27,7 @@ func loadCockroachRootCert(ctx context.Context) error {
 	}
 
 	url := "https://cockroachlabs.cloud/clusters/" + url.PathEscape(clusterID) + "/cert"
+	fmt.Println(url)
 	resp, err := http.Get(url)
 	if err != nil {
 		return err
