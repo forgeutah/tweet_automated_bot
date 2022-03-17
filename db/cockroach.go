@@ -10,12 +10,12 @@ import (
 	"os"
 )
 
-const fn = "cockroach-public-root.crt"
+const fn = "db/cockroach-public-root.crt"
 
-func loadCockroachRootCert(ctx context.Context) (string, error) {
+func loadCockroachRootCert(ctx context.Context) error {
 	_, err := os.Stat(fn)
 	if err == nil {
-		return fn, nil
+		return nil
 	}
 
 	// assume we need to get the file
@@ -23,26 +23,30 @@ func loadCockroachRootCert(ctx context.Context) (string, error) {
 
 	clusterID := os.Getenv("DB_CLUSTER_ID")
 	if clusterID == "" {
-		return "", fmt.Errorf("DB_CLUSTER_ID is not set")
+		return fmt.Errorf("DB_CLUSTER_ID is not set")
 	}
 
 	url := "https://cockroachlabs.cloud/clusters/" + url.PathEscape(clusterID) + "/cert"
 	resp, err := http.Get(url)
 	if err != nil {
-		return "", err
+		return err
+	}
+
+	if resp.StatusCode != 200 {
+		return fmt.Errorf("unexpected status code: %d", resp.StatusCode)
 	}
 	defer resp.Body.Close()
 
 	// Create the file
 	out, err := os.Create(fn)
 	if err != nil {
-		return "", err
+		return err
 	}
 	defer out.Close()
 
 	// Write the body to file
 	_, err = io.Copy(out, resp.Body)
-	return fn, err
+	return err
 }
 
 func removeCert(ctx context.Context) error {

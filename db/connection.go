@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/url"
 	"os"
@@ -18,15 +19,15 @@ type Connection struct {
 func Connect(ctx context.Context) (*Connection, error) {
 	log.Println("Connecting to database...")
 
-	rootCertPath, err := loadCockroachRootCert(ctx)
+	err := loadCockroachRootCert(ctx)
 	if err != nil {
 		return nil, err
 	}
 
 	params := url.Values{}
 	params.Set("sslmode", "verify-full")
-	params.Set("sslrootcert", rootCertPath)
-	params.Set("options", os.Getenv("DB_OPTIONS"))
+	params.Set("sslrootcert", fn)
+	params.Set("options", "--cluster%3Dlanky-bird-5343")
 
 	connectionString := url.URL{
 		Scheme:   "postgres",
@@ -35,7 +36,14 @@ func Connect(ctx context.Context) (*Connection, error) {
 		Path:     os.Getenv("DB_NAME"),
 		RawQuery: params.Encode(),
 	}
+
+	//TODO: remove lines 40-46
 	log.Println(connectionString.String())
+	files, _ := ioutil.ReadDir("./")
+
+	for _, f := range files {
+		fmt.Println(f.Name())
+	}
 
 	db, err := sqlx.Connect("postgres", connectionString.String())
 	if err != nil {
