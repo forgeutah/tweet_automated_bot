@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
@@ -13,10 +12,6 @@ import (
 	database "github.com/SoyPete/tweet_automated_bot/db"
 	"github.com/SoyPete/tweet_automated_bot/internal/botguts"
 )
-
-func healthCheck(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("we are live"))
-}
 
 func main() {
 	ctx := context.Background()
@@ -29,8 +24,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	defer db.Close(ctx)
 
 	// TODO: ここでbotを作成する
 	bot := botguts.NewAutoBot(db, client)
@@ -47,6 +40,7 @@ func main() {
 	go func() {
 		<-client.ShutDown
 		fmt.Println("Bot is now stopped.")
+		db.Close(ctx)
 		os.Exit(0)
 	}()
 
