@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/url"
 	"os"
@@ -18,24 +19,29 @@ type Connection struct {
 func Connect(ctx context.Context) (*Connection, error) {
 	log.Println("Connecting to database...")
 
-	rootCertPath, err := loadCockroachRootCert(ctx)
+	err := loadCockroachRootCert(ctx)
+
 	if err != nil {
 		return nil, err
 	}
 
 	params := url.Values{}
+	params.Set("sslrootcert", fn)
 	params.Set("sslmode", "verify-full")
-	params.Set("sslrootcert", rootCertPath)
-	params.Set("options", os.Getenv("DB_OPTIONS"))
-  
+
+
 	connectionString := url.URL{
-		Scheme:   "postgres",
+		Scheme:   "postgresql",
 		User:     url.UserPassword(os.Getenv("DB_USERNAME"), os.Getenv("DB_PASSWORD")),
 		Host:     os.Getenv("DB_HOST"),
 		Path:     os.Getenv("DB_NAME"),
-		RawQuery: params.Encode(),
+		RawQuery: params.Encode() + "&options=--cluster%3Dlanky-bird-5343", // options and clusert values need to remain un-encoded to connect:
 	}
-	log.Println(connectionString.String())
+
+	for _, f := range files {
+		fmt.Println(f.Name())
+	}
+
 
 	db, err := sqlx.Connect("postgres", connectionString.String())
 	if err != nil {
@@ -56,7 +62,10 @@ func Connect(ctx context.Context) (*Connection, error) {
 
 func (c *Connection) Close(ctx context.Context) error {
 	log.Println("Closing database connection...")
-	c.DB.MustExecContext(ctx, `DROP TABLE IF EXISTS yt_videos CASCADE`)
+	err := removeCert(ctx)
+	if err != nil {
+		log.Println(fmt.Errorf("error removing cert: %w", err))
+	}
 	return c.DB.Close()
 }
 
