@@ -32,7 +32,6 @@ func main() {
 
 	defer db.Close(ctx)
 
-
 	// TODO: ここでbotを作成する
 	bot := botguts.NewAutoBot(db, client)
 	err = bot.TweetYoutubeVideo(ctx)
@@ -50,20 +49,5 @@ func main() {
 		fmt.Println("Bot is now stopped.")
 		os.Exit(0)
 	}()
-
-	http.HandleFunc("/health", healthCheck)
-
-	// Determine port for HTTP service.
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
-		log.Printf("defaulting to port %s", port)
-	}
-
-	// Start HTTP server.
-	log.Printf("listening on port %s", port)
-	if err := http.ListenAndServe(":"+port, nil); err != nil {
-		log.Fatal(err)
-	}
 
 }
