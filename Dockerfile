@@ -1,7 +1,7 @@
 FROM golang:alpine@latest
 
-apk-get add --update --no-cache git
-
+RUN apk update
+RUN apk add git
 
 WORKDIR /app
 COPY go.* ./
