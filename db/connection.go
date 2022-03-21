@@ -3,7 +3,6 @@ package database
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/url"
 	"os"
@@ -36,10 +35,6 @@ func Connect(ctx context.Context) (*Connection, error) {
 		Host:     os.Getenv("DB_HOST"),
 		Path:     os.Getenv("DB_NAME"),
 		RawQuery: params.Encode() + "&options=--cluster%3Dlanky-bird-5343", // options and clusert values need to remain un-encoded to connect:
-	}
-
-	for _, f := range files {
-		fmt.Println(f.Name())
 	}
 
 
