@@ -2,6 +2,7 @@ FROM golang:alpine@latest
 
 apk-get add --update --no-cache git
 
+
 WORKDIR /app
 COPY go.* ./
 RUN go mod download

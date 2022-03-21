@@ -32,6 +32,7 @@ func main() {
 
 	defer db.Close(ctx)
 
+
 	// TODO: ここでbotを作成する
 	bot := botguts.NewAutoBot(db, client)
 	err = bot.TweetYoutubeVideo(ctx)

@@ -19,6 +19,7 @@ func loadCockroachRootCert(ctx context.Context) error {
 	}
 
 	// assume we need to get the file
+
 	log.Println("loading cluster root certificate")
 
 	clusterID := os.Getenv("DB_CLUSTER_ID")
@@ -35,6 +36,7 @@ func loadCockroachRootCert(ctx context.Context) error {
 
 	if resp.StatusCode != 200 {
 		return fmt.Errorf("unexpected status code: %d", resp.StatusCode)
+
 	}
 	defer resp.Body.Close()
 
@@ -42,6 +44,7 @@ func loadCockroachRootCert(ctx context.Context) error {
 	out, err := os.Create(fn)
 	if err != nil {
 		return err
+
 	}
 	defer out.Close()
 
@@ -58,4 +61,5 @@ func removeCert(ctx context.Context) error {
 
 	log.Println("removing cluster root certificate")
 	return os.Remove(fn)
+
 }
