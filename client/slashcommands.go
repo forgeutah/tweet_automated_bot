@@ -2,12 +2,13 @@ package client
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/bwmarrin/discordgo"
 )
 
 func (c *Client) configureSlashCommands() error {
-
+	log.Println("Setup Slash Commands")
 	c.DiscordBot.AddHandler(c.messageCreate)
 
 	//make command

@@ -2,7 +2,7 @@ package client
 
 import (
 	"fmt"
-
+	"log"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -31,14 +31,11 @@ func (c *Client) RunDiscordBot() {
 	}
 
 	// sent to general channel
+	log.Println("sending message to discord bot")
 	c.DiscordBot.ChannelMessageSend("922613112585207833", "ForgeFoundation Twitter Bot is now online!")
 	err = c.configureSlashCommands()
 	if err != nil {
 		fmt.Println("error configuring slash commands,", err)
 		return
 	}
-
-	// Cleanly close down the Discord session.
-	defer c.DiscordBot.Close()
-
 }
