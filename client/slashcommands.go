@@ -80,13 +80,18 @@ func (c *Client) sendTweet(s *discordgo.Session, it *discordgo.InteractionCreate
 	}
 
 	// make response
-	s.InteractionRespond(it.Interaction, &discordgo.InteractionResponse{
+	err := s.InteractionRespond(it.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
 		Data: &discordgo.InteractionResponseData{
 			Content: discordResponse,
 			Embeds:  []*discordgo.MessageEmbed{embedImage},
 		},
 	})
+
+	// FIXME: is this an actionable error?
+	if err != nil {
+		log.Println("error sending response: ", err)
+	}
 
 }
 
@@ -102,7 +107,7 @@ func haveValidRoles(roles []string) bool {
 
 }
 
-// send nyan cat gifs
+// send nyan cat gifs. this is used for testing
 func sendNewman(s *discordgo.Session, it *discordgo.InteractionCreate) {
 	embedImage := &discordgo.MessageEmbed{
 		Title: "Newman",
@@ -110,11 +115,15 @@ func sendNewman(s *discordgo.Session, it *discordgo.InteractionCreate) {
 			URL: "https://media.giphy.com/media/sIIhZliB2McAo/giphy.gif",
 		},
 	}
-	s.InteractionRespond(it.Interaction, &discordgo.InteractionResponse{
+	err := s.InteractionRespond(it.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
 		Data: &discordgo.InteractionResponseData{
 			Content: "Hey there! Congratulations, you called for a newman!",
 			Embeds:  []*discordgo.MessageEmbed{embedImage},
 		},
 	})
+	// FIXME: is this an actionable error?
+	if err != nil {
+		log.Println("error sending response: ", err)
+	}
 }

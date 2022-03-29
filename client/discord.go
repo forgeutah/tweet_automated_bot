@@ -32,7 +32,13 @@ func (c *Client) RunDiscordBot() {
 
 	// sent to general channel
 	log.Println("sending message to discord bot")
-	c.DiscordBot.ChannelMessageSend("922613112585207833", "ForgeFoundation Twitter Bot is now online!")
+
+	// ChannelMessageSend returns a response messge and and error
+	_, err = c.DiscordBot.ChannelMessageSend("922613112585207833", "ForgeFoundation Twitter Bot is now online!")
+	if err != nil {
+		fmt.Println("error sending startup message,", err)
+		return
+	}
 	err = c.configureSlashCommands()
 	if err != nil {
 		fmt.Println("error configuring slash commands,", err)
