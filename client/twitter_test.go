@@ -1,10 +1,15 @@
 package client
 
 import (
+	"os"
 	"testing"
 )
 
 func TestClient_SendTweet(t *testing.T) {
+	isIntegrationTest := os.Getenv("INTEGRATION_TEST")
+	if isIntegrationTest != "true" {
+		t.Skip("Skipping integration test")
+	}
 	c, _ := NewClient()
 	type args struct {
 		message string

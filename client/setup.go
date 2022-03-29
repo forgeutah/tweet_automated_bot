@@ -14,7 +14,6 @@ type Client struct {
 	TweetBot   *twitter.Client
 	DiscordBot *discordgo.Session
 	ShutDown   chan os.Signal
-
 }
 
 func NewClient() (*Client, error) {
@@ -36,7 +35,6 @@ func NewClient() (*Client, error) {
 		return nil, fmt.Errorf("failed to setup discord: %w", err)
 	}
 	sc := make(chan os.Signal, 1)
-
 
 	c := &Client{
 		TweetBot:   client,
