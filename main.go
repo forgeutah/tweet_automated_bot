@@ -24,6 +24,8 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	// check tha the database us upto dat with video files
+	db.Migrate(ctx)
 
 	go client.RunDiscordBot()
 	// Wait here until CTRL-C or other term signal is received.
@@ -62,6 +64,7 @@ func main() {
 
 }
 
+// healthCheck is a http handler for health check to make sure the server is up.
 func healthCheck(w http.ResponseWriter, r *http.Request) {
 	_, err := w.Write([]byte("we are live"))
 	if err != nil {

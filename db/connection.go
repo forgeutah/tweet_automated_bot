@@ -43,7 +43,6 @@ func Connect(ctx context.Context) (*Connection, error) {
 	}
 
 	connection := &Connection{DB: db}
-	connection.Migrate(ctx)
 
 	if err := connection.Ping(); err != nil {
 		return nil, fmt.Errorf("error pinging database: %w", err)
