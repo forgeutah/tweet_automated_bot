@@ -6,10 +6,10 @@ import (
 )
 
 func TestClient_RunDiscordBot(t *testing.T) {
-	// isIntegrationTest = os.Getenv("INTEGRATION_TEST")
-	// if isIntegrationTest != "true" {
-	// 	t.Skip("Skipping integration test")
-	// }
+	isIntegrationTest := os.Getenv("INTEGRATION_TEST")
+	if isIntegrationTest != "true" {
+		t.Skip("Skipping integration test")
+	}
 	testToken := os.Getenv("DISCORD_TOKEN")
 	validClient, err := setupDiscord(testToken)
 	if err != nil {

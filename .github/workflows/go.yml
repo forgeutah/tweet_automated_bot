@@ -23,6 +23,18 @@ jobs:
 
     - name: Test
       run: go test -v ./...
+
+   - name: Generate coverage report
+      run: |
+        INTEGRATION_TEST=true go test `go list ./... | grep -v examples` -coverprofile=coverage.txt -covermode=atomic
+
+    - name: Upload coverage report
+      uses: codecov/codecov-action@v1.0.2
+      with:
+        token: ${{ .secrets.CODECOV_TOKEN}}
+        file: ./coverage.txt
+        flags: unittests
+        name: codecov-umbrella
         
     - name: Run golangci-lint
       uses: golangci/golangci-lint-action@v3.1.0
