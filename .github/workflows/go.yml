@@ -24,7 +24,7 @@ jobs:
     - name: Test
       run: go test -v ./...
 
-   - name: Generate coverage report
+    - name: Generate coverage report
       run: |
         INTEGRATION_TEST=true go test `go list ./... | grep -v examples` -coverprofile=coverage.txt -covermode=atomic
 
