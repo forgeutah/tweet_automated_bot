@@ -2,39 +2,35 @@
 package client
 
 import (
-	"os"
 	"testing"
-
-	"github.com/bwmarrin/discordgo"
-	"github.com/dghubble/go-twitter/twitter"
 )
 
 func TestNewClient(t *testing.T) {
 	tests := []struct {
 		name    string
-		want    *Client
 		wantErr bool
 	}{
 		{
-			name: "NewClient",
-			want: &Client{
-				TweetBot:   &twitter.Client{},
-				DiscordBot: &discordgo.Session{},
-				ShutDown:   make(chan os.Signal, 1),
-			},
+			name:    "NewClient",
 			wantErr: false,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := NewClient()
+			client, err := NewClient()
 			if (err != nil) != tt.wantErr {
 				t.Errorf("NewClient() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if got != tt.want {
-				t.Errorf("NewClient() = %v, want %v", *got, *tt.want)
+			// CHECK twitter client
+			if client.TweetBot == nil {
+				t.Errorf("NewClient() TwitterClient is nil")
+			}
+
+			// check discord client
+			if client.DiscordBot == nil {
+				t.Errorf("NewClient() DiscordClient is nil")
 			}
 		})
 	}
