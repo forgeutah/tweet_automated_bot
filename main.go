@@ -11,6 +11,7 @@ import (
 
 	"github.com/SoyPete/tweet_automated_bot/client"
 	database "github.com/SoyPete/tweet_automated_bot/db"
+	"github.com/SoyPete/tweet_automated_bot/internal/botguts"
 )
 
 func main() {
@@ -28,6 +29,8 @@ func main() {
 	// Wait here until CTRL-C or other term signal is received.
 	fmt.Println("Bot is now running.  Press CTRL-C to exit.")
 	signal.Notify(client.ShutDown, syscall.SIGINT, syscall.SIGTERM)
+	bot := botguts.NewAutoBot(db, client)
+	go bot.ScheduleVideoTweet(ctx)
 
 	go func() {
 		<-client.ShutDown
@@ -36,13 +39,6 @@ func main() {
 		db.Close(ctx)
 		os.Exit(0)
 	}()
-
-	// TODO: ここでbotを作成する
-	// bot := botguts.NewAutoBot(db, client)
-	// err = bot.TweetYoutubeVideo(ctx)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
 
 	http.HandleFunc("/health", healthCheck)
 

@@ -28,7 +28,6 @@ func Connect(ctx context.Context) (*Connection, error) {
 	params.Set("sslrootcert", fn)
 	params.Set("sslmode", "verify-full")
 
-
 	connectionString := url.URL{
 		Scheme:   "postgresql",
 		User:     url.UserPassword(os.Getenv("DB_USERNAME"), os.Getenv("DB_PASSWORD")),
@@ -36,7 +35,6 @@ func Connect(ctx context.Context) (*Connection, error) {
 		Path:     os.Getenv("DB_NAME"),
 		RawQuery: params.Encode() + "&options=--cluster%3Dlanky-bird-5343", // options and clusert values need to remain un-encoded to connect:
 	}
-
 
 	db, err := sqlx.Connect("postgres", connectionString.String())
 	if err != nil {
@@ -69,10 +67,31 @@ func (c *Connection) Ping() error {
 	return c.DB.Ping()
 }
 
+const create_tweet_table = `
+CREATE TYPE IF NOT EXISTS valid_status AS ENUM ('queued', 'sent', 'failed');
+
+CREATE TABLE IF NOT EXISTS tweets (
+	id serial,
+	twitter_username VARCHAR(15),
+	tweet_text text,
+	links text,
+	send_time timestamp,
+	status valid_status,
+	created_at TIMESTAMP DEFAULT now()
+);`
+
+const alter_last_send_data_query = `
+ALTER TABLE yt_videos
+ALTER COLUMN last_sent_at SET DEFAULT now();
+`
+
 func (c *Connection) Migrate(ctx context.Context) {
 	log.Println("Migrating database...")
 
 	c.DB.MustExecContext(ctx, create_query)
+	c.DB.MustExecContext(ctx, create_tweet_table)
+	c.DB.MustExecContext(ctx, alter_last_send_data_query)
+
 	// check if table exists
 	var count int
 	row := c.DB.QueryRowx("SELECT count(*) FROM yt_videos LIMIT 1")

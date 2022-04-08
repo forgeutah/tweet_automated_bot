@@ -6,18 +6,6 @@ import (
 	"time"
 )
 
-// CREATE TYPE valid_status AS ENUM ('queued', 'sent', 'failed');
-
-// CREATE TABLE IF NOT EXISTS tweets (
-// 	id serial,
-// 	twitter_username VARCHAR(15),
-// 	tweet_text text,
-// 	links text,
-// 	send_time timestamp,
-// 	status valid_status,
-// 	created_at TIMESTAMP DEFAULT now()
-// );
-
 var create_query = `
 		CREATE TABLE IF NOT EXISTS yt_videos (
 			id serial,
@@ -54,23 +42,28 @@ func (c *Connection) SelectOneRandomVideo(ctx context.Context, videoPlaylist str
 	video_url,
 	video_playlist,
 	conference_year,
-	presenter_twitter_username
-	FROM yt_videos WHERE video_playlist = $1 ORDER BY random() LIMIT 1`, videoPlaylist)
+	presenter_twitter_username,
+	last_sent_at
+	FROM yt_videos WHERE video_playlist = $1 ORDER BY random()`, videoPlaylist)
 	if err != nil {
-		return &video, fmt.Errorf("err: %w", err)
+		return nil, fmt.Errorf("err: %w", err)
 	}
 	defer rows.Close()
 	for rows.Next() {
 		err = rows.StructScan(&video)
 		if err != nil {
-			return &video, fmt.Errorf("rows.ScanStruct: %w", err)
+			return nil, fmt.Errorf("rows.ScanStruct: %w", err)
+		}
+		if canSendVideo(&video) {
+			return &video, nil
 		}
 	}
 	if rows.Err() != nil {
-		return &video, fmt.Errorf("rows.Err: %w", rows.Err())
+		return nil, fmt.Errorf("rows.Err: %w", rows.Err())
 	}
 
-	return &video, nil
+	// all videos have been sent recently
+	return nil, nil
 }
 
 // UpdateSentAt updates the last sent time for a video.
@@ -80,4 +73,9 @@ func (c *Connection) UpdateSentAt(ctx context.Context, video *YoutubeVideo) erro
 		return fmt.Errorf("err: %w", err)
 	}
 	return nil
+}
+
+// canSendVideo checks the last time a video was sent. If it was sent less than 3 months ago, it returns false.
+func canSendVideo(video *YoutubeVideo) bool {
+	return time.Since(video.LastSentAt) > (time.Hour * 24 * 30 * 3)
 }
