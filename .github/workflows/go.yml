@@ -21,9 +21,6 @@ jobs:
     - name: Build
       run: go build -v ./...
 
-    # - name: Test
-    #   run: go test -v ./...
-
     - name: Generate coverage report
       env:
         DB_CLUSTER_ID: $${{secrets.DB_CLUSTER_ID}}
