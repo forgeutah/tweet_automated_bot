@@ -26,11 +26,11 @@ jobs:
 
     - name: Generate coverage report
       env:
-        DATABASE_CLUSTER_ID=$${{secrets.DATABASE_CLUSTER_ID}}
-        DATABASE_USERNAME=$${secrets.DATABASE_USERNAME}}
-        DATBASE_PASSWORD=$${{secrets.DATBASE_PASSWORD}}
-        DATABASE_HOST=$${{secrets.DATABASE_HOST}}
-        DISCORD_TOKEN=$${{secrets.DISCORD_TOKEN}}
+        DATABASE_CLUSTER_ID: $${{secrets.DATABASE_CLUSTER_ID}}
+        DATABASE_USERNAME: $${secrets.DATABASE_USERNAME}}
+        DATBASE_PASSWORD: $${{secrets.DATBASE_PASSWORD}}
+        DATABASE_HOST: $${{secrets.DATABASE_HOST}}
+        DISCORD_TOKEN: $${{secrets.DISCORD_TOKEN}}
       run: |
         INTEGRATION_TEST=true go test `go list ./... | grep -v examples` -coverprofile=coverage.txt -covermode=atomic
 
