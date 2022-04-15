@@ -10,11 +10,11 @@ func TestClient_RunDiscordBot(t *testing.T) {
 	if isIntegrationTest != "true" {
 		t.Skip("Skipping integration test")
 	}
-	testToken := os.Getenv("DISCORD_TOKEN")
-	validClient, err := setupDiscord(testToken)
-	if err != nil {
-		t.Errorf("Error setting up discord client: %s", err)
-	}
+	// testToken := os.Getenv("DISCORD_TOKEN")
+	// validClient, err := setupDiscord(testToken)
+	// if err != nil {
+	// 	t.Errorf("Error setting up discord client: %s", err)
+	// }
 	invalidClient, err := setupDiscord("")
 	if err != nil {
 		t.Errorf("Error setting up discord client: %s", err)
@@ -25,15 +25,16 @@ func TestClient_RunDiscordBot(t *testing.T) {
 		clean   func()
 		wantErr bool
 	}{
-		{
-			name: "TestClient_RunDiscordBot",
-			c: Client{
-				DiscordBot: validClient,
-			},
-			clean: func() {
-				validClient.Close()
-			},
-		},
+		// TODO: do we want happy path tests as integrations tests or mock clients
+		// {
+		// 	name: "TestClient_RunDiscordBot_Valid",
+		// 	c: Client{
+		// 		DiscordBot: validClient,
+		// 	},
+		// 	clean: func() {
+		// 		validClient.Close()
+		// 	},
+		// },
 		{
 			name: "TestClient_RunDiscordBot_Invalid",
 			c: Client{
