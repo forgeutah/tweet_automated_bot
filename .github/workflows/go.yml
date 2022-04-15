@@ -29,7 +29,7 @@ jobs:
         DB_HOST: ${{ secrets.DB_HOST }}
         DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
       run: |
-          INTEGRATION_TEST=true  go test `go list ./... | grep -v examples` -coverprofile=coverage.txt -covermode=atomic
+          INTEGRATION_TEST=true  DB_CLUSTER_ID=${{ secrets.DB_CLUSTER_ID }} go test `go list ./... | grep -v examples` -coverprofile=coverage.txt -covermode=atomic
 
     - name: Upload coverage report
       uses: codecov/codecov-action@v1.0.2
