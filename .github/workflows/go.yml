@@ -32,6 +32,7 @@ jobs:
         DB_HOST: $${{secrets.DB_HOST}}
         DISCORD_TOKEN: $${{secrets.DISCORD_TOKEN}}
       run: |
+        echo >> $DB_CLUSTER_ID
         INTEGRATION_TEST=true go test `go list ./... | grep -v examples` -coverprofile=coverage.txt -covermode=atomic
 
     - name: Upload coverage report
