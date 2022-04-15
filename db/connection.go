@@ -78,7 +78,10 @@ func (c *Connection) Migrate(ctx context.Context) {
 		log.Println("Table does not exist")
 		// insert data
 		result := c.DB.MustExecContext(ctx, videoInsert)
-		count, _ := result.RowsAffected()
+		count, err := result.RowsAffected()
+		if err != nil {
+			log.Println(fmt.Errorf("error inserting data: %w", err))
+		}
 		if count > 0 {
 			log.Println("Inserted data")
 		}
