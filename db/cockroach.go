@@ -28,7 +28,6 @@ func loadCockroachRootCert(ctx context.Context) error {
 	}
 
 	url := "https://cockroachlabs.cloud/clusters/" + url.PathEscape(clusterID) + "/cert"
-	fmt.Println(url)
 	resp, err := http.Get(url)
 	if err != nil {
 		return err
@@ -36,8 +35,8 @@ func loadCockroachRootCert(ctx context.Context) error {
 
 	if resp.StatusCode != 200 {
 		return fmt.Errorf("unexpected status code: %d", resp.StatusCode)
-
 	}
+
 	defer resp.Body.Close()
 
 	// Create the file
