@@ -30,10 +30,9 @@ jobs:
         DB_USERNAME: $${secrets.DB_USERNAME}}
         DB_PASSWORD: $${{secrets.DATBASE_PASSWORD}}
         DB_HOST: $${{secrets.DB_HOST}}
-        DISCORD_TOKEN: $${{secrets.DISCORD_TOKEN}}
+        # DISCORD_TOKEN: $${{secrets.DISCORD_TOKEN}}
       run: |
-        echo >> $DB_CLUSTER_ID
-        INTEGRATION_TEST=true go test `go list ./... | grep -v examples` -coverprofile=coverage.txt -covermode=atomic
+        INTEGRATION_TEST=true DISCORD_TOKEN=$${{secrest.DISCORD_TOKEN}} go test `go list ./... | grep -v examples` -coverprofile=coverage.txt -covermode=atomic
 
     - name: Upload coverage report
       uses: codecov/codecov-action@v1.0.2
