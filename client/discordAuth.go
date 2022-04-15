@@ -9,7 +9,7 @@ type BearerAuth struct {
 }
 
 func (b BearerAuth) Creds() []interface{} {
-	return []interface{}{"Bearer" + b.Token}
+	return []interface{}{"Bearer " + b.Token}
 }
 
 type BotAuth struct {
@@ -17,7 +17,7 @@ type BotAuth struct {
 }
 
 func (b BotAuth) Creds() []interface{} {
-	return []interface{}{"Bot" + b.Token}
+	return []interface{}{"Bot " + b.Token}
 }
 
 type UserPassAuth struct {
