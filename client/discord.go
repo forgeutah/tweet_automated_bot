@@ -11,9 +11,9 @@ import (
 const guildID = "922613112119631913"
 const tweetBotRole = "939282540991225897"
 
-func setupDiscord(token string) (*discordgo.Session, error) {
+func setupDiscord(auth discordAuth) (*discordgo.Session, error) {
 	// Create a new Discord session using the provided bot token.
-	dg, err := discordgo.New("Bot " + token)
+	dg, err := discordgo.New(auth.Creds()...)
 	if err != nil {
 		err = fmt.Errorf("error creating Discord session: %w", err)
 		return nil, err
