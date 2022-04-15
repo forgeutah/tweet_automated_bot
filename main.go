@@ -27,7 +27,16 @@ func main() {
 	// check tha the database us upto dat with video files
 	db.Migrate(ctx)
 
-	go client.RunDiscordBot()
+	go func() {
+		err = client.RunDiscordBot()
+		if err != nil {
+			<-client.ShutDown
+			fmt.Println("Bot is now stopped.")
+			client.DiscordBot.Close()
+			db.Close(ctx)
+			os.Exit(0)
+		}
+	}()
 	// Wait here until CTRL-C or other term signal is received.
 	fmt.Println("Bot is now running.  Press CTRL-C to exit.")
 	signal.Notify(client.ShutDown, syscall.SIGINT, syscall.SIGTERM)
