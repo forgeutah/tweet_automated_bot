@@ -87,19 +87,29 @@ func TestClient_sendTweet(t *testing.T) {
 }
 
 func Test_haveValidRoles(t *testing.T) {
-	type args struct {
-		roles []string
-	}
 	tests := []struct {
-		name string
-		args args
-		want bool
+		name  string
+		roles []string
+		want  bool
 	}{
-		// TODO: Add test cases.
+		{
+			name: "Valid roles",
+			roles: []string{
+				"939282540991225897",
+			},
+			want: true,
+		},
+		{
+			name: "Invalid roles",
+			roles: []string{
+				"123432523593580293",
+			},
+			want: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := haveValidRoles(tt.args.roles); got != tt.want {
+			if got := haveValidRoles(tt.roles); got != tt.want {
 				t.Errorf("haveValidRoles() = %v, want %v", got, tt.want)
 			}
 		})

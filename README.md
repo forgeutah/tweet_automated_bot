@@ -1,5 +1,8 @@
 # tweet_automated_bot
 
+[![Actions Status](https://github.com/forgeutah/tweet_automated_bot/workflows/build/badge.svg)](https://github.com/forgeutah/tweet_automated_bot/actions)
+[![codecov](https://codecov.io/gh/forgeutah/tweet_automated_bot/branch/master/graph/badge.svg)](https://codecov.io/gh/forgeutah/tweet_automated_bot)
+
 This bot is created to send out automated tweets regarding the [GoWest Conference](https://gowestconf.com). 
 
 ## development steps
