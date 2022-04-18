@@ -77,6 +77,6 @@ func main() {
 func healthCheck(w http.ResponseWriter, r *http.Request) {
 	_, err := w.Write([]byte("we are live"))
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 }
