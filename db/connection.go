@@ -28,7 +28,6 @@ func Connect(ctx context.Context) (*Connection, error) {
 	params.Set("sslrootcert", fn)
 	params.Set("sslmode", "verify-full")
 
-
 	connectionString := url.URL{
 		Scheme:   "postgresql",
 		User:     url.UserPassword(os.Getenv("DB_USERNAME"), os.Getenv("DB_PASSWORD")),
@@ -37,7 +36,6 @@ func Connect(ctx context.Context) (*Connection, error) {
 		RawQuery: params.Encode() + "&options=--cluster%3Dlanky-bird-5343", // options and clusert values need to remain un-encoded to connect:
 	}
 
-
 	db, err := sqlx.Connect("postgres", connectionString.String())
 	if err != nil {
 
@@ -45,7 +43,6 @@ func Connect(ctx context.Context) (*Connection, error) {
 	}
 
 	connection := &Connection{DB: db}
-	connection.Migrate(ctx)
 
 	if err := connection.Ping(); err != nil {
 		return nil, fmt.Errorf("error pinging database: %w", err)
@@ -69,6 +66,7 @@ func (c *Connection) Ping() error {
 	return c.DB.Ping()
 }
 
+// Migrate runs all migrations for the database. This should only be run once. The migration files contain all of the Youtube videos used posted by the tweet bot.
 func (c *Connection) Migrate(ctx context.Context) {
 	log.Println("Migrating database...")
 
@@ -80,14 +78,29 @@ func (c *Connection) Migrate(ctx context.Context) {
 		log.Println("Table does not exist")
 		// insert data
 		result := c.DB.MustExecContext(ctx, videoInsert)
-		fmt.Println(result)
+		count, err := result.RowsAffected()
+		if err != nil {
+			log.Println(fmt.Errorf("error inserting data: %w", err))
+		}
+		if count > 0 {
+			log.Println("Inserted data")
+		}
 	} else {
-		row.Scan(&count)
+		err := row.Scan(&count)
+		if err != nil {
+			log.Println(err)
+		}
 		if count == 0 {
 			log.Println("Table is empty")
 			// insert data
 			result := c.DB.MustExecContext(ctx, videoInsert)
-			fmt.Println(result)
+			count, err := result.RowsAffected()
+			if err != nil {
+				log.Println(fmt.Errorf("error inserting data: %w", err))
+			}
+			if count > 0 {
+				log.Println("Inserted data")
+			}
 		} else {
 			log.Println("Table is not empty")
 		}

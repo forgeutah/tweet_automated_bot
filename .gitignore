@@ -23,3 +23,4 @@ cockroach-public-root.crt
 tweet_automated_bot
 dev/run_db.sh
 root.crt
+db/*.crt
