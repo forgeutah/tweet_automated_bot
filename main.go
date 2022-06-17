@@ -15,6 +15,9 @@ import (
 )
 
 func main() {
+	// TODO: setup command line flag for json file
+
+	// TODO: ad clad for optional db configs
 	ctx := context.Background()
 
 	client, err := client.NewClient()
