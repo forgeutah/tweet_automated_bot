@@ -11,6 +11,7 @@ import (
 
 	"github.com/SoyPete/tweet_automated_bot/client"
 	database "github.com/SoyPete/tweet_automated_bot/db"
+	"github.com/SoyPete/tweet_automated_bot/internal/botguts"
 )
 
 func main() {
@@ -30,33 +31,25 @@ func main() {
 	go func() {
 		err = client.RunDiscordBot()
 		if err != nil {
-			<-client.ShutDown
-			fmt.Println("Bot is now stopped.")
-			client.DiscordBot.Close()
-			db.Close(ctx)
-			os.Exit(0)
+			shutDown(ctx, client, db)
 		}
 	}()
 	// Wait here until CTRL-C or other term signal is received.
 	fmt.Println("Bot is now running.  Press CTRL-C to exit.")
 	signal.Notify(client.ShutDown, syscall.SIGINT, syscall.SIGTERM)
+	bot := botguts.NewAutoBot(db, client)
 
 	go func() {
-		<-client.ShutDown
-		fmt.Println("Bot is now stopped.")
-		client.DiscordBot.Close()
-		db.Close(ctx)
-		os.Exit(0)
+		err = bot.ScheduleVideoTweet(ctx)
+		if err != nil {
+			shutDown(ctx, client, db)
+		}
 	}()
 
-	// TODO: ここでbotを作成する
-	// bot := botguts.NewAutoBot(db, client)
-	// err = bot.TweetYoutubeVideo(ctx)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-
 	http.HandleFunc("/health", healthCheck)
+
+	//handle for ctrl+c
+	go shutDown(ctx, client, db)
 
 	// Determine port for HTTP service.
 	port := os.Getenv("PORT")
@@ -71,6 +64,15 @@ func main() {
 		log.Fatal(err)
 	}
 
+}
+
+// todo: =maybe run this once with a shutdown chanel
+func shutDown(ctx context.Context, client *client.Client, db *database.Connection) {
+	<-ctx.Done()
+	fmt.Println("Bot is now stopped.")
+	client.DiscordBot.Close()
+	db.Close(ctx)
+	os.Exit(0)
 }
 
 // healthCheck is a http handler for health check to make sure the server is up.

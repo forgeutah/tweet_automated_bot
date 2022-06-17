@@ -66,11 +66,32 @@ func (c *Connection) Ping() error {
 	return c.DB.Ping()
 }
 
+const create_tweet_table = `
+CREATE TYPE IF NOT EXISTS valid_status AS ENUM ('queued', 'sent', 'failed');
+
+CREATE TABLE IF NOT EXISTS tweets (
+	id serial,
+	twitter_username VARCHAR(15),
+	tweet_text text,
+	links text,
+	send_time timestamp,
+	status valid_status,
+	created_at TIMESTAMP DEFAULT now()
+);`
+
+const alter_last_send_data_query = `
+ALTER TABLE yt_videos
+ALTER COLUMN last_sent_at SET DEFAULT now();
+`
+
 // Migrate runs all migrations for the database. This should only be run once. The migration files contain all of the Youtube videos used posted by the tweet bot.
 func (c *Connection) Migrate(ctx context.Context) {
 	log.Println("Migrating database...")
 
 	c.DB.MustExecContext(ctx, create_query)
+	c.DB.MustExecContext(ctx, create_tweet_table)
+	c.DB.MustExecContext(ctx, alter_last_send_data_query)
+
 	// check if table exists
 	var count int
 	row := c.DB.QueryRowx("SELECT count(*) FROM yt_videos LIMIT 1")

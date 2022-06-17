@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/SoyPete/tweet_automated_bot/client"
 	database "github.com/SoyPete/tweet_automated_bot/db"
@@ -12,16 +13,36 @@ import (
 type AutoBot struct {
 	dbclient      *database.Connection
 	twitterClient *client.Client
+	timer         *time.Ticker
 }
 
 // NewAutoBot is a function that will create a new AutoBot. This auto bot is responsible for tweeting
 // youtube videos on a weekly basis
 func NewAutoBot(dbclient *database.Connection, twitterClient *client.Client) *AutoBot {
+
+	// TODO: take argument of env var for this
+	ticker := time.NewTicker(time.Hour * 24 * 7)
 	log.Println("creating new AutoBot")
 	return &AutoBot{
 		dbclient:      dbclient,
 		twitterClient: twitterClient,
+		timer:         ticker,
 	}
+}
+
+func (ab *AutoBot) ScheduleVideoTweet(ctx context.Context) error {
+	for {
+		<-ab.timer.C
+		err := ab.TweetYoutubeVideo(ctx)
+		if err != nil {
+			log.Println(err)
+			return err
+		}
+	}
+}
+
+func (ab *AutoBot) Close() {
+	ab.timer.Stop()
 }
 
 // TODO: move to twitter client
@@ -42,6 +63,10 @@ func (ab *AutoBot) TweetYoutubeVideo(ctx context.Context) error {
 	if err != nil {
 		return fmt.Errorf("error getting random video: %w", err)
 	}
+	if video == nil {
+		return fmt.Errorf("no videos found")
+	}
+
 	// create and send tweet
 	err = ab.twitterClient.SendTweet(makeVideoTweet(video))
 	if err != nil {
