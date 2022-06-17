@@ -4,6 +4,7 @@ package client
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/bwmarrin/discordgo"
@@ -28,6 +29,11 @@ func NewClient() (*Client, error) {
 	discordToken := os.Getenv("DISCORD_TOKEN")
 	httpClient := config.Client(oauth1.NoContext, token)
 
+	tClients, err := SetupTwitterClients(os.Getenv("CREDENTIAL_FILE"))
+	if err != nil {
+		log.Println("credential file support not implemented")
+	}
+
 	// Twitter client
 	client := twitter.NewClient(httpClient)
 
@@ -39,9 +45,10 @@ func NewClient() (*Client, error) {
 	sc := make(chan os.Signal, 1)
 
 	c := &Client{
-		TweetBot:   client,
-		DiscordBot: dgclient,
-		ShutDown:   sc,
+		TweetBot:       client,
+		DiscordBot:     dgclient,
+		ShutDown:       sc,
+		TwitterClients: tClients,
 	}
 
 	return c, nil
