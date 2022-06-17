@@ -1,0 +1,11 @@
+{
+  "twitter_clients": [
+    {
+	  "twitter_handle": "testUser",
+      "consumer_key": "cChZNFj6T5R0TigYB9yd1w",
+      "consumer_secret": "AcSOqF21Fu85e7zjz7ZN2U4ZRhfV3WpwPAoE3Z7kBw",
+      "access_token": "NPcudxy0yU5T3tBzho7iCotZ3cnetKwcTIRlX0iwRl0",
+      "access_secret": "veNRnAWe6inFuo8o2u8SLLZLjolYDmDP7SzL0YfYI"
+    }
+  ]
+}
