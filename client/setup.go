@@ -20,14 +20,14 @@ type Client struct {
 }
 
 func NewClient() (*Client, error) {
-	oauthConsumerKey := os.Getenv("OAUTH_CONSUMER_KEY")
-	oauthConsumerSecret := os.Getenv("OAUTH_CONSUMER_SECRET")
-	oauthAccessToken := os.Getenv("OAUTH_ACCESS_TOKEN")
-	oauthAccessSecret := os.Getenv("OAUTH_ACCESS_SECRET")
-	config := oauth1.NewConfig(oauthConsumerKey, oauthConsumerSecret)
-	token := oauth1.NewToken(oauthAccessToken, oauthAccessSecret)
+	// oauthConsumerKey := os.Getenv("OAUTH_CONSUMER_KEY")
+	// oauthConsumerSecret := os.Getenv("OAUTH_CONSUMER_SECRET")
+	// oauthAccessToken := os.Getenv("OAUTH_ACCESS_TOKEN")
+	// oauthAccessSecret := os.Getenv("OAUTH_ACCESS_SECRET")
+	// config := oauth1.NewConfig(oauthConsumerKey, oauthConsumerSecret)
+	// token := oauth1.NewToken(oauthAccessToken, oauthAccessSecret)
 	discordToken := os.Getenv("DISCORD_TOKEN")
-	httpClient := config.Client(oauth1.NoContext, token)
+	// httpClient := config.Client(oauth1.NoContext, token)
 
 	tClients, err := SetupTwitterClients(os.Getenv("CREDENTIAL_FILE"))
 	if err != nil {
@@ -35,7 +35,7 @@ func NewClient() (*Client, error) {
 	}
 
 	// Twitter client
-	client := twitter.NewClient(httpClient)
+	// client := twitter.NewClient(httpClient)
 
 	//Discord client
 	dgclient, err := setupDiscord(discordToken)
@@ -45,7 +45,6 @@ func NewClient() (*Client, error) {
 	sc := make(chan os.Signal, 1)
 
 	c := &Client{
-		TweetBot:       client,
 		DiscordBot:     dgclient,
 		ShutDown:       sc,
 		TwitterClients: tClients,

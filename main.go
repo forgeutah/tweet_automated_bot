@@ -40,14 +40,23 @@ func main() {
 	// Wait here until CTRL-C or other term signal is received.
 	fmt.Println("Bot is now running.  Press CTRL-C to exit.")
 	signal.Notify(client.ShutDown, syscall.SIGINT, syscall.SIGTERM)
-	bot := botguts.NewAutoBot(db, client)
+
+	// make bot for each twitter account?
+	gowestbot := botguts.NewAutoBot(db, client, "gowestconf")
+	// forgeutahbot := botguts.NewAutoBot(db, client, "forgeutahbot")
 
 	go func() {
-		err = bot.ScheduleVideoTweet(ctx)
+		err = gowestbot.ScheduleVideoTweet(ctx)
 		if err != nil {
 			shutDown(ctx, client, db)
 		}
 	}()
+	// go func() {
+	// 	err = forgeutahbot.ScheduleVideoTweet(ctx)
+	// 	if err != nil {
+	// 		shutDown(ctx, client, db)
+	// 	}
+	// }()
 
 	http.HandleFunc("/health", healthCheck)
 
