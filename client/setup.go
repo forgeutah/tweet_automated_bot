@@ -4,7 +4,6 @@ package client
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/bwmarrin/discordgo"
@@ -20,22 +19,11 @@ type Client struct {
 }
 
 func NewClient() (*Client, error) {
-	// oauthConsumerKey := os.Getenv("OAUTH_CONSUMER_KEY")
-	// oauthConsumerSecret := os.Getenv("OAUTH_CONSUMER_SECRET")
-	// oauthAccessToken := os.Getenv("OAUTH_ACCESS_TOKEN")
-	// oauthAccessSecret := os.Getenv("OAUTH_ACCESS_SECRET")
-	// config := oauth1.NewConfig(oauthConsumerKey, oauthConsumerSecret)
-	// token := oauth1.NewToken(oauthAccessToken, oauthAccessSecret)
 	discordToken := os.Getenv("DISCORD_TOKEN")
-	// httpClient := config.Client(oauth1.NoContext, token)
-
 	tClients, err := SetupTwitterClients(os.Getenv("CREDENTIAL_FILE"))
 	if err != nil {
-		log.Println("credential file support not implemented")
+		return nil, fmt.Errorf("could not setup twitter clients. missing credential file: %w", err)
 	}
-
-	// Twitter client
-	// client := twitter.NewClient(httpClient)
 
 	//Discord client
 	dgclient, err := setupDiscord(discordToken)
@@ -71,6 +59,7 @@ func SetupTwitterClients(jsonFileName string) (map[string]*twitter.Client, error
 	if err != nil {
 		return nil, fmt.Errorf("failed to get json credential file: %w", err)
 	}
+	defer f.Close()
 	dec := json.NewDecoder(f)
 	err = dec.Decode(&credentials)
 	if err != nil {
