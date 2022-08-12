@@ -29,7 +29,7 @@ func main() {
 	}
 
 	// start the twitter bot
-	bot := botguts.NewAutoBot(db, client)
+	bot := botguts.NewAutoBot(db, client, "gowestconf")
 
 	go func() {
 		for {
