@@ -14,19 +14,22 @@ type AutoBot struct {
 	dbclient      *database.Connection
 	twitterClient *client.Client
 	timer         *time.Ticker
+	accountName   string
 }
 
 // NewAutoBot is a function that will create a new AutoBot. This auto bot is responsible for tweeting
 // youtube videos on a weekly basis
-func NewAutoBot(dbclient *database.Connection, twitterClient *client.Client) *AutoBot {
+func NewAutoBot(dbclient *database.Connection, twitterClient *client.Client, twitterHandle string) *AutoBot {
 
 	// TODO: take argument of env var for this
 	ticker := time.NewTicker(time.Hour * 24 * 7)
 	log.Println("creating new AutoBot")
+	twitterClient.TweetBot = twitterClient.TwitterClients[twitterHandle]
 	return &AutoBot{
 		dbclient:      dbclient,
 		twitterClient: twitterClient,
 		timer:         ticker,
+		accountName:   twitterHandle,
 	}
 }
 
@@ -58,8 +61,7 @@ func makeVideoTweet(video *database.YoutubeVideo) string {
 func (ab *AutoBot) TweetYoutubeVideo(ctx context.Context) error {
 	log.Println("tweeting youtube video")
 	// get all the videos that have not been in last 3 months
-	fmt.Println(ab.dbclient.Ping())
-	video, err := ab.dbclient.SelectOneRandomVideo(ctx, "GoWest Conference")
+	video, err := ab.dbclient.SelectOneRandomVideo(ctx, ab.accountName)
 	if err != nil {
 		return fmt.Errorf("error getting random video: %w", err)
 	}

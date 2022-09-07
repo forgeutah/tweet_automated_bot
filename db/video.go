@@ -32,8 +32,7 @@ type YoutubeVideo struct {
 }
 
 // SelectOneRandomVideo selects a random video from the database.
-// TODO: filter out videos that have been sent recently.
-func (c *Connection) SelectOneRandomVideo(ctx context.Context, videoPlaylist string) (*YoutubeVideo, error) {
+func (c *Connection) SelectOneRandomVideo(ctx context.Context, accountName string) (*YoutubeVideo, error) {
 	var video YoutubeVideo
 	// not sent in the last 3 months
 	rows, err := c.DB.QueryxContext(ctx, `SELECT
@@ -44,7 +43,7 @@ func (c *Connection) SelectOneRandomVideo(ctx context.Context, videoPlaylist str
 	conference_year,
 	presenter_twitter_username,
 	last_sent_at
-	FROM yt_videos WHERE video_playlist = $1 ORDER BY random()`, videoPlaylist)
+	FROM yt_videos WHERE twitter_username = $1 ORDER BY random()`, accountName)
 	if err != nil {
 		return nil, fmt.Errorf("err: %w", err)
 	}
@@ -54,6 +53,7 @@ func (c *Connection) SelectOneRandomVideo(ctx context.Context, videoPlaylist str
 		if err != nil {
 			return nil, fmt.Errorf("rows.ScanStruct: %w", err)
 		}
+		// filter out videos posted within the last 3 months
 		if canSendVideo(&video) {
 			return &video, nil
 		}
