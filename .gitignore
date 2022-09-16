@@ -24,4 +24,4 @@ tweet_automated_bot
 dev/run_db.sh
 root.crt
 db/*.crt
-dev/.config.json
+*config.json
