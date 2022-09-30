@@ -1,11 +1,15 @@
-# Use postgres/example user/password credentials
-version: '3.1'
+# Use postgres/example user/password credentials and 1password
+version: "3.4"
 
 services:
+  op-connect-api:
+    image: 1password/connect-api:latest
+    ports:
+      - "8080:8080"
+    volumes:
+      - "./1password-credentials.json:/home/opuser/.op/1password-credentials.json"
+      - "data:/home/opuser/.op/data"
 
-  db:
-    image: postgres
-    environment:
-      POSTGRES_PASSWORD: postgres
-    ports: 
-      - 5432:5432
+volumes:
+  data:
+

@@ -25,3 +25,5 @@ dev/run_db.sh
 root.crt
 db/*.crt
 *config.json
+dev/.config.json
+1password-credentials.json

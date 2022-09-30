@@ -15,7 +15,6 @@ import (
 )
 
 func main() {
-	// TODO: setup command line flag for json file
 	ctx := context.Background()
 
 	client, err := client.NewClient()
