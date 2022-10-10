@@ -1,4 +1,3 @@
-# Use postgres/example user/password credentials and 1password
 version: "3.4"
 
 services:
@@ -9,7 +8,13 @@ services:
     volumes:
       - "./1password-credentials.json:/home/opuser/.op/1password-credentials.json"
       - "data:/home/opuser/.op/data"
+  op-connect-sync:
+    image: 1password/connect-sync:latest
+    ports:
+      - "8081:8080"
+    volumes:
+      - "./1password-credentials.json:/home/opuser/.op/1password-credentials.json"
+      - "data:/home/opuser/.op/data"
 
 volumes:
   data:
-
