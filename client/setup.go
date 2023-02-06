@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/bwmarrin/discordgo"
 	"github.com/dghubble/go-twitter/twitter"
 	"github.com/dghubble/oauth1"
 )
@@ -14,26 +13,18 @@ import (
 type Client struct {
 	TweetBot       *twitter.Client
 	TwitterClients map[string]*twitter.Client
-	DiscordBot     *discordgo.Session
 	ShutDown       chan os.Signal
 }
 
 func NewClient() (*Client, error) {
-	discordToken := os.Getenv("DISCORD_TOKEN")
 	tClients, err := SetupTwitterClients(os.Getenv("CREDENTIAL_FILE"))
 	if err != nil {
 		return nil, fmt.Errorf("could not setup twitter clients. missing credential file: %w", err)
 	}
 
-	//Discord client
-	dgclient, err := setupDiscord(discordToken)
-	if err != nil {
-		return nil, fmt.Errorf("failed to setup discord: %w", err)
-	}
 	sc := make(chan os.Signal, 1)
 
 	c := &Client{
-		DiscordBot:     dgclient,
 		ShutDown:       sc,
 		TwitterClients: tClients,
 	}

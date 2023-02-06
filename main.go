@@ -6,8 +6,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"os/signal"
-	"syscall"
 
 	"github.com/SoyPete/tweet_automated_bot/client"
 	database "github.com/SoyPete/tweet_automated_bot/db"
@@ -28,16 +26,6 @@ func main() {
 	}
 	// check tha the database us upto dat with video files
 	db.Migrate(ctx)
-
-	go func() {
-		err = client.RunDiscordBot()
-		if err != nil {
-			shutDown(ctx, client, db)
-		}
-	}()
-	// Wait here until CTRL-C or other term signal is received.
-	fmt.Println("Bot is now running.  Press CTRL-C to exit.")
-	signal.Notify(client.ShutDown, syscall.SIGINT, syscall.SIGTERM)
 
 	// make bot for each twitter account?
 	gowestbot := botguts.NewAutoBot(db, client, "gowestconf")
@@ -81,7 +69,6 @@ func main() {
 
 func shutDown(ctx context.Context, client *client.Client, db *database.Connection) {
 	fmt.Println("Bot is now stopped.")
-	client.DiscordBot.Close()
 	db.Close(ctx)
 	os.Exit(0)
 }
