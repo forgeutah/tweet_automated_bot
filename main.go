@@ -2,51 +2,44 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
 
 	"github.com/SoyPete/tweet_automated_bot/client"
 	database "github.com/SoyPete/tweet_automated_bot/db"
-	"github.com/SoyPete/tweet_automated_bot/internal/botguts"
 )
 
 func main() {
-	// TODO: setup command line flag for json file
 	ctx := context.Background()
 
-	client, err := client.NewClient()
+	// Connect to Supabase (migrations run automatically)
+	db, err := database.ConnectSupabase()
 	if err != nil {
 		log.Fatal(err)
 	}
-	db, err := database.Connect(ctx)
-	if err != nil {
-		log.Fatal(err)
+	defer func() {
+		if closeErr := db.Close(); closeErr != nil {
+			log.Printf("error closing database: %v", closeErr)
+		}
+	}()
+
+	// Verify database health
+	if healthErr := db.HealthCheck(); healthErr != nil {
+		log.Fatal("database health check failed:", healthErr)
 	}
-	// check tha the database us upto dat with video files
-	db.Migrate(ctx)
+	log.Println("Database health check passed")
 
-	// make bot for each twitter account?
-	gowestbot := botguts.NewAutoBot(db, client, "gowestconf")
-	forgeutahbot := botguts.NewAutoBot(db, client, "forgeutahbot")
-
-	go func() {
-		err = gowestbot.ScheduleVideoTweet(ctx)
-		if err != nil {
-			shutDown(ctx, client, db)
-		}
-	}()
-	go func() {
-		err = forgeutahbot.ScheduleVideoTweet(ctx)
-		if err != nil {
-			shutDown(ctx, client, db)
-		}
-	}()
+	// TODO: Phase 2+ will implement the new multi-platform bot architecture
+	// Legacy Twitter-only bot code has been removed
 
 	http.HandleFunc("/health", healthCheck)
 
 	//handle for ctrl+c
+	client, err := client.NewClient()
+	if err != nil {
+		log.Fatal(err)
+	}
 	go func() {
 		<-client.ShutDown
 		shutDown(ctx, client, db)
@@ -67,14 +60,16 @@ func main() {
 
 }
 
-func shutDown(ctx context.Context, client *client.Client, db *database.Connection) {
-	fmt.Println("Bot is now stopped.")
-	db.Close(ctx)
+func shutDown(_ context.Context, _ *client.Client, db *database.SupabaseConnection) {
+	log.Println("Bot is now stopped.")
+	if err := db.Close(); err != nil {
+		log.Printf("error closing database: %v", err)
+	}
 	os.Exit(0)
 }
 
 // healthCheck is a http handler for health check to make sure the server is up.
-func healthCheck(w http.ResponseWriter, r *http.Request) {
+func healthCheck(w http.ResponseWriter, _ *http.Request) {
 	_, err := w.Write([]byte("we are live"))
 	if err != nil {
 		log.Println(err)

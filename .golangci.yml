@@ -21,16 +21,20 @@ run:
   # Allowed values: readonly|vendor|mod
   # By default, it isn't set.
   modules-download-mode: readonly
-  # Define the Go version limit.
-  # Mainly related to generics support in go1.18.
-  # Default: use Go version from the go.mod file, fallback on the env var `GOVERSION`, fallback on 1.17
-  go: '1.17' 
-  linters:
-  # Enable specific linter
-  # https://golangci-lint.run/usage/linters/#enabled-by-default-linters
+
+# Define the Go version limit.
+# Default: use Go version from the go.mod file
+linters-settings:
+  govet:
+    enable-all: true
+    disable:
+      - fieldalignment  # Disable memory optimization suggestions
+
+# Enable specific linters
+# https://golangci-lint.run/usage/linters/#enabled-by-default-linters
+linters:
   enable:
     - bodyclose
-    - deadcode
     - dogsled
     - errcheck
     - goconst
@@ -38,15 +42,12 @@ run:
     - gofmt
     - gosimple
     - govet
-    - importas
     - ineffassign
     - misspell
     - revive
     - rowserrcheck
     - sqlclosecheck
     - staticcheck
-    - structcheck
     - stylecheck
     - typecheck
     - unused
-    - varcheck

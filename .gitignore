@@ -27,3 +27,13 @@ db/*.crt
 *config.json
 1password-credentials.json
 
+
+# Credentials and environment files
+.env
+.env.local
+.env.op
+config/credentials.json
+.secret
+
+# Migration output
+db/cockroach-root.crt
