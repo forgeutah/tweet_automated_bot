@@ -37,7 +37,7 @@ func NewClient() (*Client, error) {
 func SetupTwitterClients(jsonFileName string) (map[string]*twitter.Client, error) {
 
 	var credentials struct {
-		ApiCredentials []struct {
+		APICredentials []struct {
 			TwitterHandle       string `json:"twitter_handle"`
 			OauthConsumerKey    string `json:"consumer_key"`
 			OauthConsumerSecret string `json:"consumer_secret"`
@@ -57,7 +57,7 @@ func SetupTwitterClients(jsonFileName string) (map[string]*twitter.Client, error
 		return nil, fmt.Errorf("failure to decode api credential json: %w", err)
 	}
 	clients := make(map[string]*twitter.Client)
-	for _, cred := range credentials.ApiCredentials {
+	for _, cred := range credentials.APICredentials {
 		config := oauth1.NewConfig(cred.OauthConsumerKey, cred.OauthConsumerSecret)
 		token := oauth1.NewToken(cred.OauthAccessToken, cred.OauthAccessSecret)
 		httpClient := config.Client(oauth1.NoContext, token)
